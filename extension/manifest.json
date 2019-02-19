@@ -1,0 +1,15 @@
+{
+    "manifest_version": 2,
+    "name": "Counterstring",
+    "version": "0.1",
+    "description": "simple counterstring generation",
+    "background": {
+        "persistent": true,
+        "scripts": ["js/background.js"]
+      },
+      "permissions": [
+          "contextMenus",
+          "activeTab"
+        ]
+
+}

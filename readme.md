@@ -57,11 +57,13 @@ This is open source and source can be found at GitHub:
 - https://github.com/eviltester/counterstringjs
 
 
-## How to Install As Chrome Extension?
+## How to Install as Chrome Extension?
 
-At the moment the extension is not on the Chrome web store so has to be manually added as an "unpacked extension".
+You can download this from the Chrome Store:
 
-To install:
+- [The Counterstring Chrome Store Page](https://chrome.google.com/webstore/detail/counterstring/keklpkmokeicakpclclkdmclhgkklmbd)
+
+To install from source added as an "unpacked extension":
 
 - download the zip file from releases
 - unzip the file

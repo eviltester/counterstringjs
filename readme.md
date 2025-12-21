@@ -76,3 +76,7 @@ To install from source added as an "unpacked extension":
 
 - 20251221 - 0.2 - updated to manifest 3 and new API usage, with extra error handling
 - 0.1 using manifest 2
+
+## Publishing extension
+
+https://developer.chrome.com/docs/webstore/publish

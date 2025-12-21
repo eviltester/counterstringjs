@@ -23,6 +23,12 @@ function getCounterString(count){
 }
 
 var count = window.prompt("Counterstring Length?", "100");
-var counterString = getCounterString(count);
-console.log(counterString);
-document.activeElement.value=counterString;
+
+try{
+    var counterString = getCounterString(count);
+    console.log(counterString);
+    document.activeElement.value=counterString;
+} catch (err) {
+    console.error('Error while setting activeElement value:', err);
+}
+

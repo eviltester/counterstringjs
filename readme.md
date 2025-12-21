@@ -71,3 +71,8 @@ To install from source added as an "unpacked extension":
 - switch on Developer mode
 - Click Load Unpacked
 - choose the extension folder (the one with the `manifest.json` in it)
+
+## Versions
+
+- 20251221 - 0.2 - updated to manifest 3 and new API usage, with extra error handling
+- 0.1 using manifest 2

@@ -24,7 +24,7 @@ describe('forwardCounterString', () => {
         test('multiple schema entries', () => {
             const schema = [
                 {startNumber: 1, endNumber: 9, increment: 2},
-                {startNumber: 10, endNumber: 18, increment: 3}
+                {startNumber: 12, endNumber: 18, increment: 3}
             ];
             const result = forwardCounterString(schema);
             expect(result).toBe('*3*5*7*9*12*15*18*');
@@ -34,7 +34,7 @@ describe('forwardCounterString', () => {
         test('large counterstring using multiple transitions', () => {
             const schema = [
                 {startNumber: 1, endNumber: 9, increment: 2},
-                {startNumber: 10, endNumber: 18, increment: 3}
+                {startNumber: 12, endNumber: 18, increment: 3}
             ];
             const result = forwardCounterString(schema);
             expect(result.length).toBe(18);
@@ -43,7 +43,7 @@ describe('forwardCounterString', () => {
         test('verifies character count matches endNumber for multiple schemas', () => {
             const schema = [
                 {startNumber: 1, endNumber: 9, increment: 2},
-                {startNumber: 10, endNumber: 18, increment: 3}
+                {startNumber: 12, endNumber: 18, increment: 3}
             ];
             const result = forwardCounterString(schema);
             expect(result.length).toBe(18);
@@ -52,7 +52,7 @@ describe('forwardCounterString', () => {
         test('large counterstring using multiple transitions', () => {
             const schema = [
                 {startNumber: 1, endNumber: 9, increment: 2},
-                {startNumber: 10, endNumber: 21, increment: 3}
+                {startNumber: 12, endNumber: 21, increment: 3}
             ];
             const result = forwardCounterString(schema);
             expect(result.length).toBe(21);
@@ -61,7 +61,7 @@ describe('forwardCounterString', () => {
         test('verifies character count matches endNumber for multiple schemas', () => {
             const schema = [
                 {startNumber: 1, endNumber: 9, increment: 2},
-                {startNumber: 10, endNumber: 21, increment: 3}
+                {startNumber: 12, endNumber: 21, increment: 3}
             ];
             const result = forwardCounterString(schema);
             expect(result.length).toBe(21);

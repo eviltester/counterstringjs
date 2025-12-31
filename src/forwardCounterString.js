@@ -60,6 +60,11 @@ function validateSchema(schema) {
             if (entry.increment !== expectedIncrement) {
                 throw new Error(`Schema validation error: Increments must increase by 1 (expected ${expectedIncrement}, got ${entry.increment})`);
             }
+
+            const expectedStart = schema[i - 1].endNumber + entry.increment;
+            if (entry.startNumber !== expectedStart) {
+                throw new Error(`Schema validation error: startNumber must be ${expectedStart}, but got ${entry.startNumber}`);
+            }
         }
     }
 }

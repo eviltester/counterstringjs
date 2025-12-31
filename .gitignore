@@ -1,2 +1,6 @@
 .idea
 /counterstringjs.iml
+node_modules/
+build/
+coverage/
+*.zip

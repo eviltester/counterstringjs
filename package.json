@@ -1,0 +1,32 @@
+{
+  "name": "counterstringjs",
+  "version": "0.3.1",
+  "description": "Chrome Extension for generating CounterStrings",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src/**/*.js extension/js/**/*.js tests/**/*.js",
+    "build": "npm run lint && npm run test && npm run package",
+    "package": "node scripts/package.js"
+  },
+  "keywords": [
+    "chrome-extension",
+    "counterstring",
+    "testing"
+  ],
+  "devDependencies": {
+    "archiver": "^7.0.1",
+    "eslint": "^9.17.0",
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/**/*.test.js"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  }
+}

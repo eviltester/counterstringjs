@@ -4,7 +4,7 @@
   "description": "Chrome Extension for generating CounterStrings",
   "scripts": {
     "test": "jest",
-    "lint": "eslint src/**/*.js extension/js/**/*.js tests/**/*.js",
+    "lint": "eslint extension/js/**/*.js tests/**/*.js",
     "build": "npm run lint && npm run test && npm run package",
     "package": "node scripts/package.js"
   },
@@ -22,8 +22,8 @@
     "testEnvironment": "node",
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
-      "src/**/*.js",
-      "!src/**/*.test.js"
+      "extension/js/**/*.js",
+      "!extension/js/**/*.test.js"
     ],
     "testMatch": [
       "**/tests/**/*.test.js"

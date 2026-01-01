@@ -1,4 +1,4 @@
-const forwardCounterString = require('../src/forwardCounterString');
+const forwardCounterString = require('../extension/js/forwardCounterString');
 
 describe('forwardCounterString', () => {
     describe('Phase 1: Basic Functionality', () => {

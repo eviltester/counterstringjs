@@ -1,5 +1,5 @@
-const generateSchemaForCounterString = require('../src/generateSchema');
-const forwardCounterString = require('../src/forwardCounterString');
+const generateSchemaForCounterString = require('../extension/js/generateSchema');
+const forwardCounterString = require('../extension/js/forwardCounterString');
 
 describe('generateSchemaForCounterString', () => {
 

@@ -1,4 +1,4 @@
-const { validateCounterString } = require('../src/validateCounterString');
+const { validateCounterString } = require('../extension/js/validateCounterString');
 
 describe('validateCounterString', () => {
     test('throws error for empty string input', () => {

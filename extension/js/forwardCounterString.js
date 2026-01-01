@@ -69,4 +69,6 @@ function validateSchema(schema) {
     }
 }
 
-module.exports = forwardCounterString;
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = forwardCounterString;
+}

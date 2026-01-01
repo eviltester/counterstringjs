@@ -1,7 +1,7 @@
-const { getCounterString } = require('../src/counterstring');
-const { validateCounterString } = require('../src/validateCounterString');
-const generateSchemaForCounterString = require('../src/generateSchema');
-const forwardCounterString = require('../src/forwardCounterString');
+const { getCounterString } = require('../extension/js/counterstring');
+const { validateCounterString } = require('../extension/js/validateCounterString');
+const generateSchemaForCounterString = require('../extension/js/generateSchema');
+const forwardCounterString = require('../extension/js/forwardCounterString');
 
 const STRESS_TEST_MAX_LENGTH = 100;
 const STRESS_TEST_STEP = 3;

@@ -40,4 +40,6 @@ function validateCounterString(str) {
     return true;
 }
 
-module.exports = { validateCounterString };
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { validateCounterString };
+}

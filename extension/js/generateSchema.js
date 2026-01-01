@@ -52,4 +52,7 @@ function generateSchemaForCounterString(X) {
     return schemaLines;
 }
 
-module.exports = generateSchemaForCounterString;
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = generateSchemaForCounterString;
+}
+

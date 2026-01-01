@@ -1,4 +1,4 @@
-const { reverseString, getCounterString } = require('../src/counterstring');
+const { reverseString, getCounterString } = require('../extension/js/counterstring');
 
 describe('reverseString', () => {
     test('reverses a basic string', () => {

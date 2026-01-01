@@ -17,5 +17,7 @@ result.then(function(config) {
         originalActiveElement.value = counterString;
     }
 }).catch(function(err) {
-    console.error('Error generating counterstring:', err);
+    if (err !== null) {
+        console.error('Error generating counterstring:', err);
+    }
 });

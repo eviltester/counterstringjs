@@ -192,6 +192,8 @@ function getCodeForChar(char) {
             console.log(`Typing completed at ${currentResult}/${length} characters`);
         }
     } catch (err) {
-        console.error('Error while typing counterstring:', err);
+        if (err !== null) {
+            console.error('Error while typing counterstring:', err);
+        }
     }
 })();

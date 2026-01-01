@@ -2,7 +2,7 @@ var contextMenus = {};
 
 function createContextMenu() {
     chrome.contextMenus.removeAll(() => {
-        contextMenus.createCounterString =
+        contextMenus.createCounterString = 
             chrome.contextMenus.create(
                 {
                     "id": "generateCounterstring",
@@ -16,7 +16,7 @@ function createContextMenu() {
                 }
             );
 
-        contextMenus.typeCounterstring =
+        contextMenus.typeCounterstring = 
             chrome.contextMenus.create(
                 {
                     "id": "typeCounterstring",
@@ -26,6 +26,20 @@ function createContextMenu() {
                 function (){
                     if(chrome.runtime.lastError){
                         console.error("Error creating Type Counterstring context menu:", chrome.runtime.lastError.message);
+                    }
+                }
+            );
+
+        contextMenus.repeatTextOrChr = 
+            chrome.contextMenus.create(
+                {
+                    "id": "repeatTextOrChr",
+                    "title":"Repeat Text / Chr...",
+                    "contexts" : ["editable"]
+                },
+                function (){
+                    if(chrome.runtime.lastError){
+                        console.error("Error creating Repeat Text/Chr context menu:", chrome.runtime.lastError.message);
                     }
                 }
             );
@@ -58,6 +72,17 @@ function contextMenuHandler(info, tab){
               });
         }catch(e){
             console.error("Type Counterstring script error:", e);
+        }
+    }
+
+    if(info.menuItemId==="repeatTextOrChr"){
+        try{
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                files: ['js/repeat-dialog.js', 'js/repeat-init.js']
+              });
+        }catch(e){
+            console.error("Repeat Text/Chr script error:", e);
         }
     }
 }

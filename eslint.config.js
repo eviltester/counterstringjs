@@ -1,6 +1,6 @@
 module.exports = [
     {
-        ignores: ['node_modules/**', 'build/**', 'coverage/**', 'releases/*.zip', 'extension/js/generateSchema.js', 'extension/js/incrementalForwardCounterString.js', 'extension/js/dialog.js']
+        ignores: ['node_modules/**', 'build/**', 'coverage/**', 'releases/*.zip', 'extension/js/generateSchema.js', 'extension/js/incrementalForwardCounterString.js', 'extension/js/dialog.js', 'extension/js/repeat-dialog.js', 'extension/js/repeat-init.js']
     },
     {
         languageOptions: {

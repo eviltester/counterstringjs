@@ -89,7 +89,6 @@ function getCodeForChar(char) {
         });
         
         if (!config) {
-            console.log('Cancelled by user');
             return;
         }
 
@@ -97,8 +96,6 @@ function getCodeForChar(char) {
         const minDelay = config ? config.minDelay : null;
         const maxDelay = config ? config.maxDelay : null;
         const delimiter = config ? config.delimiter : '*';
-        
-        console.log('Config values - length:', length, 'minDelay:', minDelay, 'maxDelay:', maxDelay, 'delimiter:', delimiter);
         
         if (!length || isNaN(length) || length <= 0) {
             throw new Error('Invalid length: ' + length);
@@ -115,7 +112,6 @@ function getCodeForChar(char) {
 
         function escapeHandler(e) {
             if (e.key === 'Escape') {
-                console.log('Counterstring typing cancelled');
                 abortController.abort();
                 cancelled = true;
                 document.removeEventListener('keydown', escapeHandler);
@@ -125,8 +121,6 @@ function getCodeForChar(char) {
         document.addEventListener('keydown', escapeHandler);
 
         var schema = generateSchemaForCounterString(length, delimiter);
-        console.log('Schema generated for length', length, 'with delimiter:', delimiter);
-        console.log('Delay range:', minDelay, '-', maxDelay, 'ms');
 
         var charCount = 0;
         let currentResult = 0;

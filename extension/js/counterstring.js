@@ -3,8 +3,6 @@ function reverseString(reverseMe) {
 }
 
 function getCounterString(count, delimiter) {
-    console.log('getCounterString called with count:', count, 'delimiter:', delimiter);
-    
     if (delimiter === undefined || delimiter === null || delimiter === '') {
         delimiter = '*';
     }

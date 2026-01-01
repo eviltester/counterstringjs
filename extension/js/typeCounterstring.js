@@ -1,5 +1,3 @@
-var count = window.prompt("Counterstring Length?", "100");
-
 async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -18,110 +16,114 @@ function getCodeForChar(char) {
 }
 
 (async function() {
-    try{
-        if (count === null || count === '') {
+    try {
+        const originalActiveElement = document.activeElement;
+        const config = await showCounterstringDialog({
+            title: 'Type Counterstring',
+            buttonText: 'Start Typing',
+            showDelay: true
+        });
+        
+        if (!config) {
             console.log('Cancelled by user');
-        } else {
-            const length = parseInt(count, 10);
-            
-            if (isNaN(length) || length <= 0) {
-                throw new Error('Please enter a valid positive number');
+            return;
+        }
+
+        const { length, minDelay, maxDelay } = config;
+        const activeElement = originalActiveElement;
+        
+        if (!activeElement) {
+            throw new Error('No active element found');
+        }
+
+        activeElement.focus();
+
+        const abortController = new AbortController();
+        let cancelled = false;
+
+        function escapeHandler(e) {
+            if (e.key === 'Escape') {
+                console.log('Counterstring typing cancelled');
+                abortController.abort();
+                cancelled = true;
+                document.removeEventListener('keydown', escapeHandler);
             }
+        }
 
-            const activeElement = document.activeElement;
-            
-            if (!activeElement) {
-                throw new Error('No active element found');
-            }
+        document.addEventListener('keydown', escapeHandler);
 
-            const abortController = new AbortController();
-            let cancelled = false;
+        var schema = generateSchemaForCounterString(length);
+        console.log('Schema generated for length', length);
+        console.log('Delay range:', minDelay, '-', maxDelay, 'ms');
 
-            function escapeHandler(e) {
-                if (e.key === 'Escape') {
-                    console.log('Counterstring typing cancelled');
-                    abortController.abort();
-                    cancelled = true;
-                    document.removeEventListener('keydown', escapeHandler);
-                }
-            }
+        var charCount = 0;
+        let currentResult = 0;
 
-            document.addEventListener('keydown', escapeHandler);
+        var charSegments = [];
+        incrementalForwardCounterString(schema, function(segment, position) {
+            charSegments.push({segment, position});
+            return !abortController.signal.aborted;
+        }, abortController.signal);
 
-            var schema = generateSchemaForCounterString(length);
-            console.log('Schema generated for length', length);
+        for (const {segment, position} of charSegments) {
+            if (abortController.signal.aborted) break;
 
-            var charCount = 0;
-            let currentResult = 0;
-
-            activeElement.focus();
-
-            var charSegments = [];
-            incrementalForwardCounterString(schema, function(segment, position) {
-                charSegments.push({segment, position});
-                return !abortController.signal.aborted;
-            }, abortController.signal);
-
-            for (const {segment, position} of charSegments) {
-                if (abortController.signal.aborted) break;
-
-                for (let i = 0; i < segment.length; i++) {
-                    if (abortController.signal.aborted) {
-                        currentResult = charCount;
-                        break;
-                    }
-
-                    const char = segment[i];
-                    const charCode = char.charCodeAt(0);
-
-                    console.log(`Typing char ${charCount + 1}/${length}: "${char}" at position ${position}`);
-
-                    const keydownEvent = new KeyboardEvent('keydown', {
-                        key: char,
-                        code: getCodeForChar(char),
-                        keyCode: charCode,
-                        which: charCode,
-                        bubbles: true
-                    });
-                    activeElement.dispatchEvent(keydownEvent);
-
-                    const delay = Math.random() * 100 + 100;
-                    await sleep(delay);
-
-                    const keyupEvent = new KeyboardEvent('keyup', {
-                        key: char,
-                        code: getCodeForChar(char),
-                        keyCode: charCode,
-                        which: charCode,
-                        bubbles: true
-                    });
-                    activeElement.dispatchEvent(keyupEvent);
-
-                    const inputEvent = new InputEvent('input', {
-                        data: char,
-                        inputType: 'insertText',
-                        bubbles: true,
-                        cancelable: true
-                    });
-                    activeElement.dispatchEvent(inputEvent);
-
-                    activeElement.value += char;
-
-                    charCount++;
-                }
-
+            for (let i = 0; i < segment.length; i++) {
                 if (abortController.signal.aborted) {
+                    currentResult = charCount;
                     break;
                 }
+
+                const char = segment[i];
+                const charCode = char.charCodeAt(0);
+
+                console.log(`Typing char ${charCount + 1}/${length}: "${char}" at position ${position}`);
+
+                const keydownEvent = new KeyboardEvent('keydown', {
+                    key: char,
+                    code: getCodeForChar(char),
+                    keyCode: charCode,
+                    which: charCode,
+                    bubbles: true
+                });
+                activeElement.dispatchEvent(keydownEvent);
+
+                const delay = Math.random() * (maxDelay - minDelay) + minDelay;
+                await sleep(delay);
+
+                const keyupEvent = new KeyboardEvent('keyup', {
+                    key: char,
+                    code: getCodeForChar(char),
+                    keyCode: charCode,
+                    which: charCode,
+                    bubbles: true
+                });
+                activeElement.dispatchEvent(keyupEvent);
+
+                const inputEvent = new InputEvent('input', {
+                    data: char,
+                    inputType: 'insertText',
+                    bubbles: true,
+                    cancelable: true
+                });
+                activeElement.dispatchEvent(inputEvent);
+
+                activeElement.value += char;
+
+                charCount++;
             }
 
-            currentResult = charCount;
-
-            if (cancelled) {
-                console.log(`Typing cancelled at ${currentResult}/${length} characters`);
-            } else {
-                console.log(`Typing completed at ${currentResult}/${length} characters`);
+            if (abortController.signal.aborted) {
+                break;
             }
+        }
+
+        currentResult = charCount;
+
+        if (cancelled) {
+            console.log(`Typing cancelled at ${currentResult}/${length} characters`);
+        } else {
+            console.log(`Typing completed at ${currentResult}/${length} characters`);
         }
     } catch (err) {
         console.error('Error while typing counterstring:', err);

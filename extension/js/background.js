@@ -43,7 +43,7 @@ function contextMenuHandler(info, tab){
         try{
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                files: ['js/counterstring.js', 'js/counterstring-init.js']
+                files: ['js/dialog.js', 'js/counterstring.js', 'js/counterstring-init.js']
               });
         }catch(e){
             console.error("Counterstring script error:", e);
@@ -54,7 +54,7 @@ function contextMenuHandler(info, tab){
         try{
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                files: ['js/generateSchema.js', 'js/incrementalForwardCounterString.js', 'js/typeCounterstring.js']
+                files: ['js/dialog.js', 'js/generateSchema.js', 'js/incrementalForwardCounterString.js', 'js/typeCounterstring.js']
               });
         }catch(e){
             console.error("Type Counterstring script error:", e);

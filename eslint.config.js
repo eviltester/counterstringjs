@@ -1,6 +1,6 @@
 module.exports = [
     {
-        ignores: ['node_modules/**', 'build/**', 'coverage/**', 'releases/*.zip', 'extension/js/generateSchema.js', 'extension/js/incrementalForwardCounterString.js']
+        ignores: ['node_modules/**', 'build/**', 'coverage/**', 'releases/*.zip', 'extension/js/generateSchema.js', 'extension/js/incrementalForwardCounterString.js', 'extension/js/dialog.js']
     },
     {
         languageOptions: {

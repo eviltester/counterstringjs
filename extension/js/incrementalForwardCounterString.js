@@ -1,10 +1,14 @@
-function incrementalForwardCounterString(schema, callback, abortSignal) {
+function incrementalForwardCounterString(schema, callback, abortSignal, delimiter) {
+    if (delimiter === undefined || delimiter === null || delimiter === '') {
+        delimiter = '*';
+    }
+    
     if (!schema || schema.length === 0) {
         return 0;
     }
-
+    
     validateSchema(schema);
-
+    
     let charCount = 0;
 
     for (let i = 0; i < schema.length; i++) {
@@ -19,11 +23,11 @@ function incrementalForwardCounterString(schema, callback, abortSignal) {
 
             let segment = '';
             if (position === 1) {
-                segment = '*';
+                segment = delimiter;
                 charCount += 1;
             } else {
                 const positionStr = position.toString();
-                segment = positionStr + '*';
+                segment = positionStr + delimiter;
                 charCount += positionStr.length + 1;
             }
 

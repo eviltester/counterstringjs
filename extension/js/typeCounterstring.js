@@ -3,21 +3,85 @@ async function sleep(ms) {
 }
 
 function getCodeForChar(char) {
-    if (char === '*') {
+    if (char === ' ') {
+        return 'Space';
+    } else if (char === '!') {
+        return 'Digit1';
+    } else if (char === '"') {
+        return 'Quote';
+    } else if (char === '#') {
+        return 'Digit3';
+    } else if (char === '$') {
+        return 'Digit4';
+    } else if (char === '%') {
+        return 'Digit5';
+    } else if (char === '&') {
+        return 'Digit6';
+    } else if (char === '\'') {
+        return 'Quote';
+    } else if (char === '(') {
+        return 'Digit9';
+    } else if (char === ')') {
+        return 'Digit0';
+    } else if (char === '*') {
         return 'Digit8';
+    } else if (char === '+') {
+        return 'Equal';
+    } else if (char === ',') {
+        return 'Comma';
+    } else if (char === '-') {
+        return 'Minus';
+    } else if (char === '.') {
+        return 'Period';
+    } else if (char === '/') {
+        return 'Slash';
+    } else if (char === ':') {
+        return 'Semicolon';
+    } else if (char === ';') {
+        return 'Semicolon';
+    } else if (char === '<') {
+        return 'Comma';
+    } else if (char === '=') {
+        return 'Equal';
+    } else if (char === '>') {
+        return 'Period';
+    } else if (char === '?') {
+        return 'Slash';
+    } else if (char === '@') {
+        return 'Digit2';
+    } else if (char === '[') {
+        return 'BracketLeft';
+    } else if (char === ']') {
+        return 'BracketRight';
+    } else if (char === '^') {
+        return 'Digit6';
+    } else if (char === '_') {
+        return 'Minus';
+    } else if (char === '`') {
+        return 'Backquote';
+    } else if (char === '{') {
+        return 'BracketLeft';
+    } else if (char === '|') {
+        return 'Backslash';
+    } else if (char === '}') {
+        return 'BracketRight';
+    } else if (char === '~') {
+        return 'Backquote';
     } else if (char >= '0' && char <= '9') {
         return 'Digit' + char;
     } else if (char >= 'a' && char <= 'z') {
         return 'Key' + char.toUpperCase();
     } else if (char >= 'A' && char <= 'Z') {
         return 'Key' + char.toUpperCase();
+    } else {
+        return 'Space';
     }
-    return 'Unknown';
 }
 
 (async function() {
     try {
         const originalActiveElement = document.activeElement;
+        
         const config = await showCounterstringDialog({
             title: 'Type Counterstring',
             buttonText: 'Start Typing',
@@ -29,14 +93,22 @@ function getCodeForChar(char) {
             return;
         }
 
-        const { length, minDelay, maxDelay } = config;
+        const length = config ? config.length : null;
+        const minDelay = config ? config.minDelay : null;
+        const maxDelay = config ? config.maxDelay : null;
+        const delimiter = config ? config.delimiter : '*';
+        
+        console.log('Config values - length:', length, 'minDelay:', minDelay, 'maxDelay:', maxDelay, 'delimiter:', delimiter);
+        
+        if (!length || isNaN(length) || length <= 0) {
+            throw new Error('Invalid length: ' + length);
+        }
+        
         const activeElement = originalActiveElement;
         
         if (!activeElement) {
             throw new Error('No active element found');
         }
-
-        activeElement.focus();
 
         const abortController = new AbortController();
         let cancelled = false;
@@ -52,20 +124,22 @@ function getCodeForChar(char) {
 
         document.addEventListener('keydown', escapeHandler);
 
-        var schema = generateSchemaForCounterString(length);
-        console.log('Schema generated for length', length);
+        var schema = generateSchemaForCounterString(length, delimiter);
+        console.log('Schema generated for length', length, 'with delimiter:', delimiter);
         console.log('Delay range:', minDelay, '-', maxDelay, 'ms');
 
         var charCount = 0;
         let currentResult = 0;
 
-        var charSegments = [];
-        incrementalForwardCounterString(schema, function(segment, position) {
-            charSegments.push({segment, position});
-            return !abortController.signal.aborted;
-        }, abortController.signal);
+        activeElement.focus();
 
-        for (const {segment, position} of charSegments) {
+        var charSegments = [];
+        incrementalForwardCounterString(schema, function(segment) {
+            charSegments.push(segment);
+            return !abortController.signal.aborted;
+        }, abortController.signal, delimiter);
+
+        for (const segment of charSegments) {
             if (abortController.signal.aborted) break;
 
             for (let i = 0; i < segment.length; i++) {
@@ -76,8 +150,6 @@ function getCodeForChar(char) {
 
                 const char = segment[i];
                 const charCode = char.charCodeAt(0);
-
-                console.log(`Typing char ${charCount + 1}/${length}: "${char}" at position ${position}`);
 
                 const keydownEvent = new KeyboardEvent('keydown', {
                     key: char,

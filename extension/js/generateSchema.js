@@ -1,6 +1,10 @@
 
-function generateSchemaForCounterString(X) {
-
+function generateSchemaForCounterString(X, delimiter) {
+    
+    if (delimiter === undefined || delimiter === null || delimiter === '') {
+        delimiter = '*';
+    }
+    
     // special cases
     if (X <= 0) return [];
     if (X == 1) return [{startNumber:1, endNumber:1, increment:2}];
@@ -9,7 +13,7 @@ function generateSchemaForCounterString(X) {
     let current = X;
     let next=X;
     let currentInc = 0;
-    const separator="*";
+    const separator=delimiter;
     const separatorLength = separator.toString().length;
 
     let schemaLine = {};

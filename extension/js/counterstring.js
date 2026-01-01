@@ -2,13 +2,18 @@ function reverseString(reverseMe) {
     return reverseMe.split("").reverse().join("");
 }
 
-function getCounterString(count) {
+function getCounterString(count, delimiter) {
+    console.log('getCounterString called with count:', count, 'delimiter:', delimiter);
+    
+    if (delimiter === undefined || delimiter === null || delimiter === '') {
+        delimiter = '*';
+    }
     
     var counterString = "";
 
     while(count>0){
 
-        var appendThis = "*" + reverseString(count.toString());
+        var appendThis = delimiter + reverseString(count.toString());
         
         if(appendThis.length>count){
             appendThis = appendThis.substring(0,count);

@@ -1,10 +1,14 @@
-function forwardCounterString(schema) {
+function forwardCounterString(schema, delimiter) {
+    if (delimiter === undefined || delimiter === null || delimiter === '') {
+        delimiter = '*';
+    }
+    
     if (!schema || schema.length === 0) {
         return '';
     }
-
+    
     validateSchema(schema);
-
+    
     let counterString = '';
     let charCount = 0;
 
@@ -15,11 +19,11 @@ function forwardCounterString(schema) {
 
         while (position <= entry.endNumber) {
             if (position === 1) {
-                counterString += '*';
+                counterString += delimiter;
                 charCount += 1;
             } else {
                 const positionStr = position.toString();
-                counterString += positionStr + '*';
+                counterString += positionStr + delimiter;
                 charCount += positionStr.length + 1;
             }
 

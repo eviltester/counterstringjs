@@ -99,6 +99,11 @@ function showCounterstringDialog(options) {
         const lengthField = createField('Counterstring Length', 'length', 'number', defaults.length, 1, 1000000);
         form.appendChild(lengthField.field);
 
+        const delimiterField = createField('Delimiter', 'delimiter', 'text', '*', undefined, undefined, 'Single character (default: *)');
+        delimiterField.input.maxLength = 1;
+        delimiterField.input.style.width = '100px';
+        form.appendChild(delimiterField.field);
+
         let minDelayField, maxDelayField;
         if (showDelay) {
             minDelayField = createField('Min Delay (ms)', 'minDelay', 'number', defaults.minDelay, 10, 5000, 'Minimum delay between characters');
@@ -168,37 +173,45 @@ function showCounterstringDialog(options) {
 
         okButton.onclick = () => {
             const length = parseInt(lengthField.input.value, 10);
-
+            
             if (isNaN(length) || length <= 0) {
                 alert('Please enter a valid positive length');
                 return;
             }
-
+            
             const result = { length };
-
+            
+            let delimiterValue = delimiterField.input.value;
+            
+            if (delimiterValue.length > 0) {
+                result.delimiter = delimiterValue.charAt(0);
+            } else {
+                result.delimiter = '*';
+            }
+            
             if (showDelay) {
                 const minDelay = parseInt(minDelayField.input.value, 10);
                 const maxDelay = parseInt(maxDelayField.input.value, 10);
-
+                
                 if (isNaN(minDelay) || minDelay < 0) {
                     alert('Please enter a valid minimum delay');
                     return;
                 }
-
+                
                 if (isNaN(maxDelay) || maxDelay < 0) {
                     alert('Please enter a valid maximum delay');
                     return;
                 }
-
+                
                 if (minDelay > maxDelay) {
                     alert('Minimum delay must be less than or equal to maximum delay');
                     return;
                 }
-
+                
                 result.minDelay = minDelay;
                 result.maxDelay = maxDelay;
             }
-
+            
             closePopup();
             resolve(result);
         };

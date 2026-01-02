@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Input Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .event-log {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            height: 150px;
+            overflow-y: auto;
+        }
+        .status {
+            font-weight: bold;
+            color: #333;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Chrome Extension Input Events Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Basic Input Event Detection</h2>
+        <p>Use the Chrome extension to generate a counterstring in this field. Check if input events are logged below.</p>
+        <input type="text" id="testInput1" placeholder="Click here, then use Chrome extension to generate counterstring">
+        <div class="event-log" id="log1"></div>
+        <div class="status" id="status1">Status: Ready</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Form Validation Integration</h2>
+        <p>This field has validation that should trigger when input events occur.</p>
+        <input type="text" id="testInput2" placeholder="Field with validation">
+        <div class="event-log" id="log2"></div>
+        <div class="status" id="status2">Status: Ready</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Framework-like Behavior</h2>
+        <p>This simulates how React/Vue/Angular might handle input changes.</p>
+        <input type="text" id="testInput3" placeholder="Framework simulation">
+        <div class="event-log" id="log3"></div>
+        <div class="status" id="status3">Status: Ready</div>
+    </div>
+
+    <script>
+        function setupInputTest(inputId, logId, statusId) {
+            const input = document.getElementById(inputId);
+            const log = document.getElementById(logId);
+            const status = document.getElementById(statusId);
+            
+            let inputEventCount = 0;
+            let valueChangeEventCount = 0;
+            
+            // Listen for input events
+            input.addEventListener('input', (e) => {
+                inputEventCount++;
+                log.innerHTML += `<div>✅ INPUT EVENT: "${e.data}" (count: ${inputEventCount})</div>`;
+                status.textContent = `Status: Input event detected (${inputEventCount})`;
+                status.className = 'status success';
+            });
+            
+            // Listen for change events
+            input.addEventListener('change', (e) => {
+                valueChangeEventCount++;
+                log.innerHTML += `<div>🔄 CHANGE EVENT (count: ${valueChangeEventCount})</div>`;
+            });
+            
+            // Listen for keydown events for comparison
+            input.addEventListener('keydown', (e) => {
+                log.innerHTML += `<div>⌨️ KEYDOWN: "${e.key}"</div>`;
+            });
+            
+            // Add validation simulation
+            input.addEventListener('input', (e) => {
+                if (input.value.length > 0 && input.value.includes('*')) {
+                    log.innerHTML += `<div>🔍 VALIDATION: Counterstring detected!</div>`;
+                }
+            });
+        }
+        
+        // Setup all test inputs
+        setupInputTest('testInput1', 'log1', 'status1');
+        setupInputTest('testInput2', 'log2', 'status2');
+        setupInputTest('testInput3', 'log3', 'status3');
+        
+        // Instructions
+        console.log('Test page loaded. Instructions:');
+        console.log('1. Click on any input field');
+        console.log('2. Right-click and select "Generate Counterstring" from Chrome extension');
+        console.log('3. Check if input events are logged in the gray boxes below');
+        console.log('4. Test with checkbox checked (default) and unchecked');
+    </script>
+</body>
+</html>

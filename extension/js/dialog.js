@@ -1,6 +1,7 @@
 function showCounterstringDialog(options) {
     return new Promise((resolve, reject) => {
         const showDelay = options.showDelay !== undefined ? options.showDelay : false;
+        const showTriggerInputEvents = options.showTriggerInputEvents !== undefined ? options.showTriggerInputEvents : true;
         const defaults = {
             length: '100',
             minDelay: showDelay ? '100' : undefined,
@@ -104,6 +105,34 @@ function showCounterstringDialog(options) {
         delimiterField.input.style.width = '100px';
         form.appendChild(delimiterField.field);
 
+        // Add checkbox for triggering input events (only for Generate mode, not Type mode)
+        let triggerInputEventsField;
+        if (showTriggerInputEvents) {
+            triggerInputEventsField = createField('', 'triggerInputEvents', 'checkbox', true);
+            triggerInputEventsField.input.checked = true; // Default to true
+            triggerInputEventsField.input.style.width = 'auto';
+            triggerInputEventsField.input.style.marginRight = '12px';
+            triggerInputEventsField.input.style.flex = '0 0 auto';
+
+            const triggerInputEventsLabel = document.createElement('label');
+            triggerInputEventsLabel.htmlFor = 'triggerInputEvents';
+            triggerInputEventsLabel.textContent = 'Trigger input events';
+            triggerInputEventsLabel.style.cssText = `
+                font-weight: normal;
+                color: #555;
+                font-size: 14px;
+                cursor: pointer;
+                flex: 1;
+            `;
+
+            const checkboxContainer = document.createElement('div');
+            checkboxContainer.style.cssText = 'margin-bottom: 15px; display: flex; align-items: center; width: 100%;';
+            checkboxContainer.appendChild(triggerInputEventsField.input);
+            checkboxContainer.appendChild(triggerInputEventsLabel);
+
+            form.appendChild(checkboxContainer);
+        }
+
         let minDelayField, maxDelayField;
         if (showDelay) {
             minDelayField = createField('Min Delay (ms)', 'minDelay', 'number', defaults.minDelay, 10, 5000, 'Minimum delay between characters');
@@ -180,6 +209,11 @@ function showCounterstringDialog(options) {
             }
             
             const result = { length };
+            
+            // Add checkbox value to result (only if checkbox is shown)
+            if (showTriggerInputEvents && triggerInputEventsField) {
+                result.triggerInputEvents = triggerInputEventsField.input.checked;
+            }
             
             let delimiterValue = delimiterField.input.value;
             

@@ -85,7 +85,8 @@ function getCodeForChar(char) {
         const config = await showCounterstringDialog({
             title: 'Type Counterstring',
             buttonText: 'Start Typing',
-            showDelay: true
+            showDelay: true,
+            showTriggerInputEvents: false
         });
         
         if (!config) {

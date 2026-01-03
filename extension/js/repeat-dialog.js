@@ -88,8 +88,32 @@ function showRepeatDialog() {
         chrLabel.appendChild(chrRadio);
         chrLabel.appendChild(chrSpan);
 
+        const regexLabel = document.createElement('label');
+        regexLabel.style.cssText = `
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+            cursor: pointer;
+        `;
+
+        const regexRadio = document.createElement('input');
+        regexRadio.type = 'radio';
+        regexRadio.name = 'mode';
+        regexRadio.style.cssText = 'margin-right: 8px;';
+
+        const regexSpan = document.createElement('span');
+        regexSpan.textContent = 'Regex';
+        regexSpan.style.cssText = 'font-size: 14px;';
+
+        regexLabel.appendChild(regexRadio);
+        regexLabel.appendChild(regexSpan);
+
         radioGroup.appendChild(repeatTextLabel);
         radioGroup.appendChild(chrLabel);
+        radioGroup.appendChild(regexLabel);
         form.appendChild(radioGroup);
 
         const textInputGroup = document.createElement('div');
@@ -153,6 +177,109 @@ function showRepeatDialog() {
         chrInputGroup.appendChild(chrLabel2);
         chrInputGroup.appendChild(chrInput);
         form.appendChild(chrInputGroup);
+
+        const regexInputGroup = document.createElement('div');
+        regexInputGroup.id = 'repeat-regex-input-group';
+        regexInputGroup.style.display = 'none';
+
+        // Sample regex dropdown
+        const sampleField = document.createElement('div');
+        sampleField.style.cssText = 'margin-bottom: 15px;';
+
+        const sampleLabel = document.createElement('label');
+        sampleLabel.textContent = 'Sample Regexes';
+        sampleLabel.style.cssText = `
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+        `;
+
+        const sampleSelect = document.createElement('select');
+        sampleSelect.id = 'repeat-sample-regex';
+        sampleSelect.style.cssText = `
+            width:100%;
+            padding: 10px 12px;
+            border:2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        `;
+        sampleSelect.onfocus = () => sampleSelect.style.borderColor = '#4a90d9';
+        sampleSelect.onblur = () => sampleSelect.style.borderColor = '#ddd';
+
+        sampleRegexes.forEach(sample => {
+            const option = document.createElement('option');
+            option.value = sample.regex;
+            option.textContent = sample.name;
+            sampleSelect.appendChild(option);
+        });
+
+        sampleField.appendChild(sampleLabel);
+        sampleField.appendChild(sampleSelect);
+        regexInputGroup.appendChild(sampleField);
+
+        const regexPatternLabel = document.createElement('label');
+        regexPatternLabel.textContent = 'Regex Pattern:';
+        regexPatternLabel.style.cssText = `
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+        `;
+
+        const regexInput = document.createElement('textarea');
+        regexInput.id = 'repeat-regex-input';
+        regexInput.rows = 3;
+        regexInput.style.cssText = `
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            font-family: monospace;
+            resize: vertical;
+        `;
+
+        regexInputGroup.appendChild(regexPatternLabel);
+        regexInputGroup.appendChild(regexInput);
+
+        const flagsLabel = document.createElement('label');
+        flagsLabel.textContent = 'Flag (i or m):';
+        flagsLabel.style.cssText = `
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+        `;
+
+        const flagsInput = document.createElement('input');
+        flagsInput.type = 'text';
+        flagsInput.id = 'repeat-flags-input';
+        flagsInput.placeholder = 'i';
+        flagsInput.style.cssText = `
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        `;
+
+        regexInputGroup.appendChild(flagsLabel);
+        regexInputGroup.appendChild(flagsInput);
+
+        // Populate textarea when sample is selected
+        sampleSelect.onchange = () => {
+            regexInput.value = sampleSelect.value;
+        };
+
+        form.appendChild(regexInputGroup);
 
         const repeatCountGroup = document.createElement('div');
         repeatCountGroup.id = 'repeat-count-group';
@@ -261,9 +388,7 @@ function showRepeatDialog() {
             if (this.checked) {
                 textInputGroup.style.display = 'block';
                 chrInputGroup.style.display = 'none';
-            } else {
-                textInputGroup.style.display = 'none';
-                chrInputGroup.style.display = 'block';
+                regexInputGroup.style.display = 'none';
             }
         });
 
@@ -271,9 +396,15 @@ function showRepeatDialog() {
             if (this.checked) {
                 textInputGroup.style.display = 'none';
                 chrInputGroup.style.display = 'block';
-            } else {
-                textInputGroup.style.display = 'block';
+                regexInputGroup.style.display = 'none';
+            }
+        });
+
+        regexRadio.addEventListener('change', function() {
+            if (this.checked) {
+                textInputGroup.style.display = 'none';
                 chrInputGroup.style.display = 'none';
+                regexInputGroup.style.display = 'block';
             }
         });
 
@@ -283,9 +414,9 @@ function showRepeatDialog() {
         };
 
         typeButton.onclick = () => {
-            const mode = repeatTextRadio.checked ? 'text' : 'chr';
+            const mode = repeatTextRadio.checked ? 'text' : (chrRadio.checked ? 'chr' : 'regex');
             const repeatCount = parseInt(repeatCountInput.value, 10);
-            
+
             if (mode === 'text') {
                 const text = textInput.value;
                 if (!text || repeatCount < 1) {
@@ -294,7 +425,7 @@ function showRepeatDialog() {
                 }
                 closePopup();
                 resolve({ action: 'type', mode, text, repeatCount });
-            } else {
+            } else if (mode === 'chr') {
                 const chrCode = parseInt(chrInput.value, 10);
                 if (isNaN(chrCode) || repeatCount < 1) {
                     alert('Please enter a valid Chr number and repeat count');
@@ -303,13 +434,28 @@ function showRepeatDialog() {
                 const chr = String.fromCharCode(chrCode);
                 closePopup();
                 resolve({ action: 'type', mode, chr, repeatCount });
+            } else if (mode === 'regex') {
+                const pattern = regexInput.value.trim();
+                const flags = flagsInput.value.trim();
+                if (!pattern || repeatCount < 1) {
+                    alert('Please enter a regex pattern and a valid repeat count');
+                    return;
+                }
+                // Validate flags
+                const validFlags = /^[im]*$/;
+                if (!validFlags.test(flags)) {
+                    alert('Flags must contain only \'i\' and/or \'m\'');
+                    return;
+                }
+                closePopup();
+                resolve({ action: 'type', mode, pattern, flags, repeatCount });
             }
         };
 
         generateButton.onclick = () => {
-            const mode = repeatTextRadio.checked ? 'text' : 'chr';
+            const mode = repeatTextRadio.checked ? 'text' : (chrRadio.checked ? 'chr' : 'regex');
             const repeatCount = parseInt(repeatCountInput.value, 10);
-            
+
             if (mode === 'text') {
                 const text = textInput.value;
                 if (!text || repeatCount < 1) {
@@ -318,7 +464,7 @@ function showRepeatDialog() {
                 }
                 closePopup();
                 resolve({ action: 'generate', mode, text, repeatCount });
-            } else {
+            } else if (mode === 'chr') {
                 const chrCode = parseInt(chrInput.value, 10);
                 if (isNaN(chrCode) || repeatCount < 1) {
                     alert('Please enter a valid Chr number and repeat count');
@@ -327,6 +473,21 @@ function showRepeatDialog() {
                 const chr = String.fromCharCode(chrCode);
                 closePopup();
                 resolve({ action: 'generate', mode, chr, repeatCount });
+            } else if (mode === 'regex') {
+                const pattern = regexInput.value.trim();
+                const flags = flagsInput.value.trim();
+                if (!pattern || repeatCount < 1) {
+                    alert('Please enter a regex pattern and a valid repeat count');
+                    return;
+                }
+                // Validate flags
+                const validFlags = /^[im]*$/;
+                if (!validFlags.test(flags)) {
+                    alert('Flags must contain only \'i\' and/or \'m\'');
+                    return;
+                }
+                closePopup();
+                resolve({ action: 'generate', mode, pattern, flags, repeatCount });
             }
         };
 

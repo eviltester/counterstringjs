@@ -89,6 +89,21 @@ var originalActiveElement = document.activeElement;
         return typeText(text, 1);
     }
 
+    async function typeRegex(pattern, flags, repeatCount) {
+        for (let r = 0; r < repeatCount; r++) {
+            if (abortController && abortController.signal.aborted) {
+                return false;
+            }
+
+            const randomString = getRandomString(pattern, flags);
+            const typed = await typeText(randomString, 1);
+            if (!typed) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     showRepeatDialog().then(function(result) {
         if (!result) {
             return;
@@ -128,6 +143,18 @@ var originalActiveElement = document.activeElement;
                     }
                     document.removeEventListener('keydown', escapeHandler);
                 });
+            } else if (result.mode === 'regex' && result.pattern) {
+                typeRegex(result.pattern, result.flags, result.repeatCount).then(function() {
+                    if (cancelled) {
+                        console.log(`Typing cancelled at ${charCount} characters`);
+                    } else {
+                        console.log(`Typing completed at ${charCount} characters`);
+                    }
+                    document.removeEventListener('keydown', escapeHandler);
+                }).catch(function(error) {
+                    alert('Error: ' + error.message);
+                    document.removeEventListener('keydown', escapeHandler);
+                });
             }
         } else if (result.action === 'generate') {
             if (result.mode === 'text' && result.text) {
@@ -140,6 +167,19 @@ var originalActiveElement = document.activeElement;
                 const repeatedText = result.chr.repeat(result.repeatCount);
                 activeElement.value = repeatedText;
                 console.log(`Generated "${result.chr}" (code ${result.chrCode}) repeated ${result.repeatCount} times`);
+            } else if (result.mode === 'regex' && result.pattern) {
+                try {
+                    let repeatedText = '';
+                    for (let i = 0; i < result.repeatCount; i++) {
+                        const randomString = getRandomString(result.pattern, result.flags);
+                        repeatedText += randomString;
+                    }
+                    activeElement.value = repeatedText;
+                    console.log(`Generated ${result.repeatCount} random strings from regex "${result.pattern}"`);
+                    console.log(`${repeatedText}`);
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
             }
             document.removeEventListener('keydown', escapeHandler);
         }

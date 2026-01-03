@@ -149,7 +149,7 @@ function contextMenuHandler(info, tab){
         try{
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                files: ['js/repeat-dialog.js', 'js/repeat-init.js']
+                files: ['js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random.js', 'js/repeat-dialog.js', 'js/repeat-init.js']
               });
         }catch(e){
             console.error("Repeat Text/Chr script error:", e);

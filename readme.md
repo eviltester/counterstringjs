@@ -89,6 +89,8 @@ Regex Data Generation uses the MIT Licensed `randexp.js`
       - uses http://fent.github.io/randexp.js/
    - allow 'repeat' to use regex generation
    - simplified UI combine counterstring dialog
+   - simplified UI combine range dialog
+   - simplified UI combine random dialog
 - 20260101 - 0.3.1 - added unit tests, custom dialogs, typing, and repeat functionality
 - 20251231 - 0.3 - bug fix amended context menu to use id because it would lose the async returned value
 - 20251221 - 0.2 - updated to manifest 3 and new API usage, with extra error handling

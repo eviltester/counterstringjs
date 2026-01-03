@@ -76,19 +76,7 @@ function createContextMenu() {
                 }
             );
 
-        contextMenus.typeRandom =
-            chrome.contextMenus.create(
-                {
-                    "id": "typeRandom",
-                    "title":"Type Random",
-                    "contexts" : ["editable"]
-                },
-                function (){
-                    if(chrome.runtime.lastError){
-                        console.error("Error creating Type Random context menu:", chrome.runtime.lastError.message);
-                    }
-                }
-            );
+
     });
 }
 
@@ -150,18 +138,7 @@ function contextMenuHandler(info, tab){
                 files: ['js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random-dialog.js', 'js/random.js', 'js/random-init.js']
               });
         }catch(e){
-            console.error("Generate Random script error:", e);
-        }
-    }
-
-    if(info.menuItemId==="typeRandom"){
-        try{
-            chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                files: ['js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random-dialog.js', 'js/random.js', 'js/typeRandom.js']
-              });
-        }catch(e){
-            console.error("Type Random script error:", e);
+            console.error("Random script error:", e);
         }
     }
 }

@@ -193,7 +193,7 @@ function contextMenuHandler(info, tab){
         try{
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                files: ['js/external/randexp.min.js', 'js/random-dialog.js', 'js/random.js', 'js/random-init.js']
+                files: ['js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random-dialog.js', 'js/random.js', 'js/random-init.js']
               });
         }catch(e){
             console.error("Generate Random script error:", e);
@@ -204,7 +204,7 @@ function contextMenuHandler(info, tab){
         try{
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                files: ['js/external/randexp.min.js', 'js/random-dialog.js', 'js/random.js', 'js/typeRandom.js']
+                files: ['js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random-dialog.js', 'js/random.js', 'js/typeRandom.js']
               });
         }catch(e){
             console.error("Type Random script error:", e);

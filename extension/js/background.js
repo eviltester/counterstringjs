@@ -16,6 +16,33 @@ function createContextMenu() {
                 }
             );
 
+        contextMenus.generateRandom =
+            chrome.contextMenus.create(
+                {
+                    "id": "generateRandom",
+                    "title":"Generate Random",
+                    "contexts" : ["editable"]
+                },
+                function (){
+                    if(chrome.runtime.lastError){
+                        console.error("Error creating Generate Random context menu:", chrome.runtime.lastError.message);
+                    }
+                }
+            );
+
+        contextMenus.generateRange =
+            chrome.contextMenus.create(
+                {
+                    "id": "generateRange",
+                    "title":"Generate Range",
+                    "contexts" : ["editable"]
+                },
+                function (){
+                    if(chrome.runtime.lastError){
+                        console.error("Error creating Generate Range context menu:", chrome.runtime.lastError.message);
+                    }
+                }
+            );
 
 
         contextMenus.repeatTextOrChr = 
@@ -45,38 +72,6 @@ function createContextMenu() {
                     }
                 }
             );
-
-        contextMenus.generateRange =
-            chrome.contextMenus.create(
-                {
-                    "id": "generateRange",
-                    "title":"Generate Range",
-                    "contexts" : ["editable"]
-                },
-                function (){
-                    if(chrome.runtime.lastError){
-                        console.error("Error creating Generate Range context menu:", chrome.runtime.lastError.message);
-                    }
-                }
-            );
-
-
-
-        contextMenus.generateRandom =
-            chrome.contextMenus.create(
-                {
-                    "id": "generateRandom",
-                    "title":"Generate Random",
-                    "contexts" : ["editable"]
-                },
-                function (){
-                    if(chrome.runtime.lastError){
-                        console.error("Error creating Generate Random context menu:", chrome.runtime.lastError.message);
-                    }
-                }
-            );
-
-
     });
 }
 
@@ -95,6 +90,28 @@ function contextMenuHandler(info, tab){
               });
         }catch(e){
             console.error("Counterstring script error:", e);
+        }
+    }
+
+    if(info.menuItemId==="generateRandom"){
+        try{
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                files: ['js/keyboard-utils.js', 'js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random-dialog.js', 'js/random.js', 'js/random-init.js']
+              });
+        }catch(e){
+            console.error("Random script error:", e);
+        }
+    }
+
+    if(info.menuItemId==="generateRange"){
+        try{
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                files: ['js/keyboard-utils.js', 'js/range-dialog.js', 'js/range.js', 'js/range-init.js']
+              });
+        }catch(e){
+            console.error("Range script error:", e);
         }
     }
 
@@ -117,28 +134,6 @@ function contextMenuHandler(info, tab){
               });
         }catch(e){
             console.error("Binary Chop script error:", e);
-        }
-    }
-
-    if(info.menuItemId==="generateRange"){
-        try{
-            chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                files: ['js/keyboard-utils.js', 'js/range-dialog.js', 'js/range.js', 'js/range-init.js']
-              });
-        }catch(e){
-            console.error("Range script error:", e);
-        }
-    }
-
-    if(info.menuItemId==="generateRandom"){
-        try{
-            chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                files: ['js/keyboard-utils.js', 'js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random-dialog.js', 'js/random.js', 'js/random-init.js']
-              });
-        }catch(e){
-            console.error("Random script error:", e);
         }
     }
 }

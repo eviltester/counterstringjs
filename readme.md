@@ -10,6 +10,11 @@ Then the Snippet was converted into a simple Chrome Extension.
 
 See the `extension` folder.
 
+## Release
+
+- Amend `manifest.json` version
+- Amend `package.json` version
+- `npm run build`
 
 ## Blog Posts & Videos
 
@@ -80,7 +85,7 @@ Regex Data Generation uses the MIT Licensed `randexp.js`
 
 ## Versions
 
-- 202601?? - 0.3.2
+- 202601?? - 0.4.0
    - added optional input event when generating counterstring
    - migrated and expanded features from https://github.com/eviltester/testtoolhub
       - binary chop

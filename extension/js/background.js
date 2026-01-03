@@ -44,7 +44,7 @@ function createContextMenu() {
                 }
             );
 
-        contextMenus.binaryChop = 
+        contextMenus.binaryChop =
             chrome.contextMenus.create(
                 {
                     "id": "binaryChop",
@@ -54,6 +54,34 @@ function createContextMenu() {
                 function (){
                     if(chrome.runtime.lastError){
                         console.error("Error creating Binary Chop context menu:", chrome.runtime.lastError.message);
+                    }
+                }
+            );
+
+        contextMenus.generateRange =
+            chrome.contextMenus.create(
+                {
+                    "id": "generateRange",
+                    "title":"Generate Range",
+                    "contexts" : ["editable"]
+                },
+                function (){
+                    if(chrome.runtime.lastError){
+                        console.error("Error creating Generate Range context menu:", chrome.runtime.lastError.message);
+                    }
+                }
+            );
+
+        contextMenus.typeRange =
+            chrome.contextMenus.create(
+                {
+                    "id": "typeRange",
+                    "title":"Type Range",
+                    "contexts" : ["editable"]
+                },
+                function (){
+                    if(chrome.runtime.lastError){
+                        console.error("Error creating Type Range context menu:", chrome.runtime.lastError.message);
                     }
                 }
             );
@@ -108,6 +136,28 @@ function contextMenuHandler(info, tab){
               });
         }catch(e){
             console.error("Binary Chop script error:", e);
+        }
+    }
+
+    if(info.menuItemId==="generateRange"){
+        try{
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                files: ['js/range-dialog.js', 'js/range.js', 'js/range-init.js']
+              });
+        }catch(e){
+            console.error("Generate Range script error:", e);
+        }
+    }
+
+    if(info.menuItemId==="typeRange"){
+        try{
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                files: ['js/range-dialog.js', 'js/typeRange.js']
+              });
+        }catch(e){
+            console.error("Type Range script error:", e);
         }
     }
 }

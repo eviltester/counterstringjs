@@ -8,7 +8,9 @@ showBinaryChopDialog().then(function(dialog) {
     dialog.setOnGenerate(function(config) {
         try {
             const binaryChopper = new BinaryChopifier();
-            const binaryChop = binaryChopper.chop(config.start, config.end);
+            const binaryChop = config.bound === 'lower' 
+                ? binaryChopper.chopLower(config.start, config.end)
+                : binaryChopper.chop(config.start, config.end);
             
             const header = `start: ${config.start} end: ${config.end}\nresult\n\n`;
             const separator = 'chop: value (inc)\n' + '-'.repeat(20) + '\n';

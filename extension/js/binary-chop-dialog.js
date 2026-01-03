@@ -101,6 +101,71 @@ function showBinaryChopDialog() {
         form.appendChild(endLabel);
         form.appendChild(endInput);
 
+        const boundLabel = document.createElement('label');
+        boundLabel.textContent = 'Bound:';
+        boundLabel.style.cssText = `
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+        `;
+
+        const boundGroup = document.createElement('div');
+        boundGroup.style.cssText = 'margin-bottom: 15px;';
+
+        const upperLabel = document.createElement('label');
+        upperLabel.style.cssText = `
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+            cursor: pointer;
+        `;
+
+        const upperRadio = document.createElement('input');
+        upperRadio.type = 'radio';
+        upperRadio.name = 'bound';
+        upperRadio.checked = true;
+        upperRadio.style.cssText = 'margin-right: 8px;';
+
+        const upperSpan = document.createElement('span');
+        upperSpan.textContent = 'Upper';
+        upperSpan.style.cssText = 'font-size: 14px;';
+
+        upperLabel.appendChild(upperRadio);
+        upperLabel.appendChild(upperSpan);
+
+        const lowerLabel = document.createElement('label');
+        lowerLabel.style.cssText = `
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+            cursor: pointer;
+        `;
+
+        const lowerRadio = document.createElement('input');
+        lowerRadio.type = 'radio';
+        lowerRadio.name = 'bound';
+        lowerRadio.style.cssText = 'margin-right: 8px;';
+
+        const lowerSpan = document.createElement('span');
+        lowerSpan.textContent = 'Lower';
+        lowerSpan.style.cssText = 'font-size: 14px;';
+
+        lowerLabel.appendChild(lowerRadio);
+        lowerLabel.appendChild(lowerSpan);
+
+        boundGroup.appendChild(upperLabel);
+        boundGroup.appendChild(lowerLabel);
+        form.appendChild(boundLabel);
+        form.appendChild(boundGroup);
+
         const buttons = document.createElement('div');
         buttons.style.cssText = `
             display: flex;
@@ -191,6 +256,7 @@ function showBinaryChopDialog() {
         generateButton.onclick = () => {
             const start = parseInt(startInput.value, 10);
             const end = parseInt(endInput.value, 10);
+            const bound = upperRadio.checked ? 'upper' : 'lower';
             
             if (isNaN(start) || isNaN(end)) {
                 alert('Please enter valid start and end values');
@@ -208,7 +274,7 @@ function showBinaryChopDialog() {
             }
             
             if (onGenerate) {
-                onGenerate({ start, end, resultsTextarea });
+                onGenerate({ start, end, bound, resultsTextarea });
             }
         };
 

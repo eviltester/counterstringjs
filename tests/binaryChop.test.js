@@ -116,5 +116,22 @@ describe('BinaryChopifier', () => {
             expect(binaryChop.getEnd()).toBe(5);
             expect(binaryChop.getChopPoint(1)).toBe(3);
         });
+
+        test('chopLower produces valid chop points', () => {
+            const binaryChopper = new BinaryChopifier();
+            const result = binaryChopper.chopLower(1024, 2048);
+
+            expect(result.getStart()).toBe(1024);
+            expect(result.getEnd()).toBe(2048);
+            expect(result.countChopPoints()).toBeGreaterThan(0);
+
+            // Lower bound should be monotonically decreasing (from middle down to start)
+            for (let i = 1; i < result.countChopPoints(); i++) {
+                const current = result.getChopPoint(i);
+                const next = result.getChopPoint(i + 1);
+                expect(current).toBeGreaterThan(next);
+                expect(result.getChopPointDiff(i)).toBeGreaterThan(0);
+            }
+        });
     });
 });

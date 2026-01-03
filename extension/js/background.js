@@ -60,19 +60,7 @@ function createContextMenu() {
                 }
             );
 
-        contextMenus.typeRange =
-            chrome.contextMenus.create(
-                {
-                    "id": "typeRange",
-                    "title":"Type Range",
-                    "contexts" : ["editable"]
-                },
-                function (){
-                    if(chrome.runtime.lastError){
-                        console.error("Error creating Type Range context menu:", chrome.runtime.lastError.message);
-                    }
-                }
-            );
+
 
         contextMenus.generateRandom =
             chrome.contextMenus.create(
@@ -151,18 +139,7 @@ function contextMenuHandler(info, tab){
                 files: ['js/range-dialog.js', 'js/range.js', 'js/range-init.js']
               });
         }catch(e){
-            console.error("Generate Range script error:", e);
-        }
-    }
-
-    if(info.menuItemId==="typeRange"){
-        try{
-            chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                files: ['js/range-dialog.js', 'js/typeRange.js']
-              });
-        }catch(e){
-            console.error("Type Range script error:", e);
+            console.error("Range script error:", e);
         }
     }
 

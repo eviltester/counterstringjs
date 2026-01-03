@@ -43,6 +43,8 @@ async function sleep(ms) {
             // Set the value
             activeElement.value = counterString;
             console.log(`Generated counterstring of length ${config.length} with delimiter "${config.delimiter}"`);
+            // allow pasting from consle
+            console.log(counterString);
 
         } else if (config.mode === 'type') {
             // Type mode: progressive character-by-character typing

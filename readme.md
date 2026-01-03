@@ -85,7 +85,7 @@ Regex Data Generation uses the MIT Licensed `randexp.js`
 
 ## Versions
 
-- 202601?? - 0.4.0
+- 20260103 - 0.4.0
    - added optional input event when generating counterstring
    - migrated and expanded features from https://github.com/eviltester/testtoolhub
       - binary chop

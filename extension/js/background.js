@@ -91,7 +91,7 @@ function contextMenuHandler(info, tab){
         try{
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                files: ['js/dialog.js', 'js/counterstring.js', 'js/generateSchema.js', 'js/incrementalForwardCounterString.js', 'js/counterstring-init.js']
+                files: ['js/keyboard-utils.js', 'js/dialog.js', 'js/counterstring.js', 'js/generateSchema.js', 'js/incrementalForwardCounterString.js', 'js/counterstring-init.js']
               });
         }catch(e){
             console.error("Counterstring script error:", e);
@@ -102,7 +102,7 @@ function contextMenuHandler(info, tab){
         try{
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                files: ['js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random.js', 'js/repeat-dialog.js', 'js/repeat-init.js']
+                files: ['js/keyboard-utils.js', 'js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random.js', 'js/repeat-dialog.js', 'js/repeat-init.js']
               });
         }catch(e){
             console.error("Repeat Text/Chr script error:", e);
@@ -124,7 +124,7 @@ function contextMenuHandler(info, tab){
         try{
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                files: ['js/range-dialog.js', 'js/range.js', 'js/range-init.js']
+                files: ['js/keyboard-utils.js', 'js/range-dialog.js', 'js/range.js', 'js/range-init.js']
               });
         }catch(e){
             console.error("Range script error:", e);
@@ -135,7 +135,7 @@ function contextMenuHandler(info, tab){
         try{
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                files: ['js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random-dialog.js', 'js/random.js', 'js/random-init.js']
+                files: ['js/keyboard-utils.js', 'js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random-dialog.js', 'js/random.js', 'js/random-init.js']
               });
         }catch(e){
             console.error("Random script error:", e);

@@ -4,23 +4,7 @@ async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function getCodeForChar(char) {
-    if (char === ' ') {
-        return 'Space';
-    } else if (char === '!') {
-        return 'Digit1';
-    } else if (char === '*') {
-        return 'Digit8';
-    } else if (char >= '0' && char <= '9') {
-        return 'Digit' + char;
-    } else if (char >= 'a' && char <= 'z') {
-        return 'Key' + char.toUpperCase();
-    } else if (char >= 'A' && char <= 'Z') {
-        return 'Key' + char.toUpperCase();
-    } else {
-        return 'Space';
-    }
-}
+
 
 (async function() {
     try {

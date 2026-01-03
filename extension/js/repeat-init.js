@@ -1,50 +1,123 @@
 var originalActiveElement = document.activeElement;
 
-(function() {
-    var abortController = null;
-    var cancelled = false;
-    var charCount = 0;
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-    async function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+function getCodeForChar(char) {
+    if (char === ' ') {
+        return 'Space';
+    } else if (char === '!') {
+        return 'Digit1';
+    } else if (char === '*') {
+        return 'Digit8';
+    } else if (char >= '0' && char <= '9') {
+        return 'Digit' + char;
+    } else if (char >= 'a' && char <= 'z') {
+        return 'Key' + char.toUpperCase();
+    } else if (char >= 'A' && char <= 'Z') {
+        return 'Key' + char.toUpperCase();
+    } else {
+        return 'Space';
     }
+}
 
-    function getCodeForChar(char) {
-        if (char === ' ') {
-            return 'Space';
-        } else if (char === '!') {
-            return 'Digit1';
-        } else if (char === '*') {
-            return 'Digit8';
-        } else if (char >= '0' && char <= '9') {
-            return 'Digit' + char;
-        } else if (char >= 'a' && char <= 'z') {
-            return 'Key' + char.toUpperCase();
-        } else if (char >= 'A' && char <= 'Z') {
-            return 'Key' + char.toUpperCase();
-        } else {
-            return 'Space';
+(async function() {
+    try {
+        const originalActiveElement = document.activeElement;
+
+        const config = await showRepeatDialog();
+
+        if (!config) {
+            return;
         }
-    }
 
-    function escapeHandler(e) {
-        if (e.key === 'Escape' && !e.repeat) {
-            if (abortController) {
-                abortController.abort();
-                cancelled = true;
-            }
-            document.removeEventListener('keydown', escapeHandler);
+        const activeElement = originalActiveElement;
+
+        if (!activeElement) {
+            throw new Error('No active element found');
         }
-    }
 
-    async function typeText(text, repeatCount) {
-        for (let r = 0; r < repeatCount; r++) {
-            for (let i = 0; i < text.length; i++) {
-                if (abortController && abortController.signal.aborted) {
-                    return false;
+        if (config.mode === 'generate') {
+            // Generate mode: instant value setting
+            let repeatedContent = '';
+
+            if (config.contentMode === 'text') {
+                repeatedContent = config.text.repeat(config.repeatCount);
+            } else if (config.contentMode === 'chr') {
+                repeatedContent = config.chr.repeat(config.repeatCount);
+            } else if (config.contentMode === 'regex') {
+                try {
+                    for (let i = 0; i < config.repeatCount; i++) {
+                        const randomString = getRandomString(config.pattern, config.flags);
+                        repeatedContent += randomString;
+                    }
+                } catch (error) {
+                    alert('Error generating random strings: ' + error.message);
+                    return;
                 }
+            }
 
-                const char = text[i];
+            console.log(repeatedContent);
+
+            // Create and dispatch input event to trigger form validation and event listeners
+            const inputEvent = new InputEvent('input', {
+                data: repeatedContent,
+                inputType: 'insertText',
+                bubbles: true,
+                cancelable: true
+            });
+            activeElement.dispatchEvent(inputEvent);
+
+            // Set the value
+            try {
+                activeElement.value = repeatedContent;
+            } catch (error) {
+                console.warn('Could not set repeat value due to invalid characters:', error.message);
+                // Do not set the value
+            }
+
+        } else if (config.mode === 'type') {
+            // Type mode: progressive character-by-character typing with speed control
+            const abortController = new AbortController();
+            let cancelled = false;
+            let charCount = 0;
+
+            function escapeHandler(e) {
+                if (e.key === 'Escape') {
+                    abortController.abort();
+                    cancelled = true;
+                    document.removeEventListener('keydown', escapeHandler);
+                }
+            }
+
+            document.addEventListener('keydown', escapeHandler);
+
+            activeElement.focus();
+
+            let contentToType = '';
+
+            if (config.contentMode === 'text') {
+                contentToType = config.text.repeat(config.repeatCount);
+            } else if (config.contentMode === 'chr') {
+                contentToType = config.chr.repeat(config.repeatCount);
+            } else if (config.contentMode === 'regex') {
+                try {
+                    for (let i = 0; i < config.repeatCount; i++) {
+                        const randomString = getRandomString(config.pattern, config.flags);
+                        contentToType += randomString;
+                    }
+                } catch (error) {
+                    alert('Error generating random strings: ' + error.message);
+                    document.removeEventListener('keydown', escapeHandler);
+                    return;
+                }
+            }
+
+            for (let i = 0; i < contentToType.length; i++) {
+                if (abortController.signal.aborted) break;
+
+                const char = contentToType[i];
                 const charCode = char.charCodeAt(0);
 
                 const keydownEvent = new KeyboardEvent('keydown', {
@@ -54,9 +127,9 @@ var originalActiveElement = document.activeElement;
                     which: charCode,
                     bubbles: true
                 });
-                document.activeElement.dispatchEvent(keydownEvent);
+                activeElement.dispatchEvent(keydownEvent);
 
-                const delay = Math.random() * 50 + 50;
+                const delay = Math.random() * (config.maxDelay - config.minDelay) + config.minDelay;
                 await sleep(delay);
 
                 const keyupEvent = new KeyboardEvent('keyup', {
@@ -66,7 +139,7 @@ var originalActiveElement = document.activeElement;
                     which: charCode,
                     bubbles: true
                 });
-                document.activeElement.dispatchEvent(keyupEvent);
+                activeElement.dispatchEvent(keyupEvent);
 
                 const inputEvent = new InputEvent('input', {
                     data: char,
@@ -74,119 +147,27 @@ var originalActiveElement = document.activeElement;
                     bubbles: true,
                     cancelable: true
                 });
-                document.activeElement.dispatchEvent(inputEvent);
+                activeElement.dispatchEvent(inputEvent);
 
-                document.activeElement.value += char;
+                try {
+                    activeElement.value += char;
+                } catch (error) {
+                    console.warn('Could not append character due to invalid character:', char, error.message);
+                    // Do not append the character
+                }
 
                 charCount++;
             }
-        }
-        return true;
-    }
 
-    async function typeChr(chr, repeatCount) {
-        const text = chr.repeat(parseInt(repeatCount, 10));
-        return typeText(text, 1);
-    }
-
-    async function typeRegex(pattern, flags, repeatCount) {
-        for (let r = 0; r < repeatCount; r++) {
-            if (abortController && abortController.signal.aborted) {
-                return false;
-            }
-
-            const randomString = getRandomString(pattern, flags);
-            const typed = await typeText(randomString, 1);
-            if (!typed) {
-                return false;
+            if (cancelled) {
+                console.log(`Typing cancelled at ${charCount}/${contentToType.length} characters`);
+            } else {
+                console.log(`Typing completed at ${charCount}/${contentToType.length} characters`);
             }
         }
-        return true;
-    }
-
-    showRepeatDialog().then(function(result) {
-        if (!result) {
-            return;
-        }
-
-        const activeElement = originalActiveElement;
-        
-        if (!activeElement) {
-            throw new Error('No active element found');
-        }
-
-        abortController = new AbortController();
-
-        activeElement.focus();
-
-        // Add escape handler only when we're about to start typing
-        document.addEventListener('keydown', escapeHandler);
-
-        if (result.action === 'type') {
-            if (result.mode === 'text' && result.text) {
-                typeText(result.text, result.repeatCount).then(function() {
-                    if (cancelled) {
-                        const totalChars = result.text.length * result.repeatCount;
-                        console.log(`Typing cancelled at ${charCount}/${totalChars} characters`);
-                    } else {
-                        const totalChars = result.text.length * result.repeatCount;
-                        console.log(`Typing completed at ${charCount}/${totalChars} characters`);
-                    }
-                    document.removeEventListener('keydown', escapeHandler);
-                });
-            } else if (result.mode === 'chr' && result.chr) {
-                typeChr(result.chr, result.repeatCount).then(function() {
-                    if (cancelled) {
-                        console.log(`Typing cancelled at ${charCount}/${result.repeatCount} characters`);
-                    } else {
-                        console.log(`Typing completed at ${charCount}/${result.repeatCount} characters`);
-                    }
-                    document.removeEventListener('keydown', escapeHandler);
-                });
-            } else if (result.mode === 'regex' && result.pattern) {
-                typeRegex(result.pattern, result.flags, result.repeatCount).then(function() {
-                    if (cancelled) {
-                        console.log(`Typing cancelled at ${charCount} characters`);
-                    } else {
-                        console.log(`Typing completed at ${charCount} characters`);
-                    }
-                    document.removeEventListener('keydown', escapeHandler);
-                }).catch(function(error) {
-                    alert('Error: ' + error.message);
-                    document.removeEventListener('keydown', escapeHandler);
-                });
-            }
-        } else if (result.action === 'generate') {
-            if (result.mode === 'text' && result.text) {
-                const repeatedText = result.text.repeat(result.repeatCount);
-                activeElement.value = repeatedText;
-                console.log(`Generated "${result.text}" repeated ${result.repeatCount} times: ${repeatedText}`);
-                // log the text to allow copy pasting
-                console.log(`${repeatedText}`);
-            } else if (result.mode === 'chr' && result.chr) {
-                const repeatedText = result.chr.repeat(result.repeatCount);
-                activeElement.value = repeatedText;
-                console.log(`Generated "${result.chr}" (code ${result.chrCode}) repeated ${result.repeatCount} times`);
-            } else if (result.mode === 'regex' && result.pattern) {
-                try {
-                    let repeatedText = '';
-                    for (let i = 0; i < result.repeatCount; i++) {
-                        const randomString = getRandomString(result.pattern, result.flags);
-                        repeatedText += randomString;
-                    }
-                    activeElement.value = repeatedText;
-                    console.log(`Generated ${result.repeatCount} random strings from regex "${result.pattern}"`);
-                    console.log(`${repeatedText}`);
-                } catch (error) {
-                    alert('Error: ' + error.message);
-                }
-            }
-            document.removeEventListener('keydown', escapeHandler);
-        }
-    }).catch(function(err) {
+    } catch (err) {
         if (err !== null) {
-            console.error('Error while repeating:', err);
+            console.error('Error with repeat:', err);
         }
-        document.removeEventListener('keydown', escapeHandler);
-    });
+    }
 })();

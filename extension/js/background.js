@@ -43,6 +43,20 @@ function createContextMenu() {
                     }
                 }
             );
+
+        contextMenus.binaryChop = 
+            chrome.contextMenus.create(
+                {
+                    "id": "binaryChop",
+                    "title":"Binary Chop",
+                    "contexts" : ["editable"]
+                },
+                function (){
+                    if(chrome.runtime.lastError){
+                        console.error("Error creating Binary Chop context menu:", chrome.runtime.lastError.message);
+                    }
+                }
+            );
     });
 }
 
@@ -83,6 +97,17 @@ function contextMenuHandler(info, tab){
               });
         }catch(e){
             console.error("Repeat Text/Chr script error:", e);
+        }
+    }
+
+    if(info.menuItemId==="binaryChop"){
+        try{
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                files: ['js/binaryChop.js', 'js/binary-chop-dialog.js', 'js/binary-chop-init.js']
+              });
+        }catch(e){
+            console.error("Binary Chop script error:", e);
         }
     }
 }

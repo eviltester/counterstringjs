@@ -272,15 +272,20 @@ function setupEventHandlers({
 }) {
     let onGenerate = null;
 
+    // Add ESC key support to close dialog
+    function handleEscapeKey(e) {
+        if (e.key === 'Escape') {
+            closePopup();
+            reject(null);
+            document.removeEventListener('keydown', handleEscapeKey);
+        }
+    }
+    document.addEventListener('keydown', handleEscapeKey);
+
     function closePopup() {
         document.body.removeChild(overlay);
+        document.removeEventListener('keydown', handleEscapeKey);
     }
-
-    // Close dialog when clicking outside
-    overlay.onclick = () => {
-        closePopup();
-        reject(null);
-    };
 
     // Prevent closing when clicking inside the popup
     popup.onclick = (e) => {

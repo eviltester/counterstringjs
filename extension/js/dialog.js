@@ -355,8 +355,19 @@ function setupEventHandlers({
     reject,
     showTriggerInputEvents
 }) {
+    // Add ESC key support to close dialog
+    function handleEscapeKey(e) {
+        if (e.key === 'Escape') {
+            closePopup();
+            reject(null);
+            document.removeEventListener('keydown', handleEscapeKey);
+        }
+    }
+    document.addEventListener('keydown', handleEscapeKey);
+
     function closePopup() {
         document.body.removeChild(overlay);
+        document.removeEventListener('keydown', handleEscapeKey);
     }
 
     // Function to update UI based on selected mode
@@ -391,12 +402,6 @@ function setupEventHandlers({
             }
         }
     }
-
-    // Close dialog when clicking outside
-    overlay.onclick = () => {
-        closePopup();
-        reject(null);
-    };
 
     // Prevent closing when clicking inside the popup
     popup.onclick = (e) => {

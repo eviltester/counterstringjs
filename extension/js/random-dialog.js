@@ -18,7 +18,7 @@ function showRandomDialog(options) {
         const title = createTitle(options.title || 'Random');
 
         // Create mode selector
-        const { modeField, generateRadio, typeRadio } = createModeSelector();
+        const { modeField, generateRadio, typeRadio, copyRadio } = createModeSelector();
 
         // Create form
         const form = document.createElement('div');
@@ -43,6 +43,7 @@ function showRandomDialog(options) {
             popup,
             generateRadio,
             typeRadio,
+            copyRadio,
             cancelButton,
             okButton,
             sampleField,
@@ -120,7 +121,7 @@ function createModeSelector() {
 
     const generateLabel = document.createElement('label');
     generateLabel.htmlFor = 'mode-generate-random';
-    generateLabel.textContent = 'Generate Random';
+    generateLabel.textContent = 'Generate';
     generateLabel.style.cssText = `
         font-weight: 500;
         color: #555;
@@ -138,8 +139,26 @@ function createModeSelector() {
 
     const typeLabel = document.createElement('label');
     typeLabel.htmlFor = 'mode-type-random';
-    typeLabel.textContent = 'Type Random';
+    typeLabel.textContent = 'Type';
     typeLabel.style.cssText = `
+        font-weight: 500;
+        color: #555;
+        font-size: 14px;
+        cursor: pointer;
+        margin-right: 20px;
+    `;
+
+    const copyRadio = document.createElement('input');
+    copyRadio.type = 'radio';
+    copyRadio.id = 'mode-copy-random';
+    copyRadio.name = 'random-mode';
+    copyRadio.value = 'copy';
+    copyRadio.style.cssText = 'margin-right: 8px;';
+
+    const copyLabel = document.createElement('label');
+    copyLabel.htmlFor = 'mode-copy-random';
+    copyLabel.textContent = 'Copy to Clipboard';
+    copyLabel.style.cssText = `
         font-weight: 500;
         color: #555;
         font-size: 14px;
@@ -150,8 +169,10 @@ function createModeSelector() {
     modeField.appendChild(generateLabel);
     modeField.appendChild(typeRadio);
     modeField.appendChild(typeLabel);
+    modeField.appendChild(copyRadio);
+    modeField.appendChild(copyLabel);
 
-    return { modeField, generateRadio, typeRadio };
+    return { modeField, generateRadio, typeRadio, copyRadio };
 }
 
 function createRandomFormFields(form, defaults, showDelay) {
@@ -351,6 +372,7 @@ function setupRandomEventHandlers(params) {
         popup,
         generateRadio,
         typeRadio,
+        copyRadio,
         cancelButton: cancelBtn,
         okButton: okBtn,
         sampleField: sampleParam,
@@ -382,6 +404,12 @@ function setupRandomEventHandlers(params) {
             if (delayFieldsContainer) {
                 delayFieldsContainer.style.display = 'block';
             }
+        } else if (mode === 'copy') {
+            title.textContent = 'Copy Random';
+            okBtn.textContent = 'Copy';
+            if (delayFieldsContainer) {
+                delayFieldsContainer.style.display = 'none';
+            }
         }
     }
 
@@ -399,6 +427,7 @@ function setupRandomEventHandlers(params) {
     // Add event listeners to radio buttons
     generateRadio.addEventListener('change', () => updateUIMode('generate'));
     typeRadio.addEventListener('change', () => updateUIMode('type'));
+    copyRadio.addEventListener('change', () => updateUIMode('copy'));
 
     cancelBtn.onclick = () => {
         closePopup();
@@ -414,7 +443,7 @@ function setupRandomEventHandlers(params) {
             return;
         }
 
-        const mode = generateRadio.checked ? 'generate' : 'type';
+        const mode = generateRadio.checked ? 'generate' : typeRadio.checked ? 'type' : 'copy';
         const result = { mode, pattern, flags };
 
         if (mode === 'type') {

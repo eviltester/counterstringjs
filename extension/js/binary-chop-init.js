@@ -36,7 +36,7 @@ showBinaryChopDialog().then(function(dialog) {
             }
             
             console.table(tableData);
-            
+
             config.resultsTextarea.value = output;
             
         } catch (err) {

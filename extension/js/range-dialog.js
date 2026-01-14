@@ -18,7 +18,7 @@ function showRangeDialog(options) {
         const title = createTitle(options.title || 'Range');
 
         // Create mode selector
-        const { modeField, generateRadio, typeRadio } = createModeSelector();
+        const { modeField, generateRadio, typeRadio, copyRadio } = createModeSelector();
 
         // Create form
         const form = document.createElement('div');
@@ -43,6 +43,7 @@ function showRangeDialog(options) {
             popup,
             generateRadio,
             typeRadio,
+            copyRadio,
             cancelButton,
             okButton,
             startField,
@@ -119,7 +120,7 @@ function createModeSelector() {
 
     const generateLabel = document.createElement('label');
     generateLabel.htmlFor = 'mode-generate-range';
-    generateLabel.textContent = 'Generate Range';
+    generateLabel.textContent = 'Generate';
     generateLabel.style.cssText = `
         font-weight: 500;
         color: #555;
@@ -137,8 +138,26 @@ function createModeSelector() {
 
     const typeLabel = document.createElement('label');
     typeLabel.htmlFor = 'mode-type-range';
-    typeLabel.textContent = 'Type Range';
+    typeLabel.textContent = 'Type';
     typeLabel.style.cssText = `
+        font-weight: 500;
+        color: #555;
+        font-size: 14px;
+        cursor: pointer;
+        margin-right: 20px;
+    `;
+
+    const copyRadio = document.createElement('input');
+    copyRadio.type = 'radio';
+    copyRadio.id = 'mode-copy-range';
+    copyRadio.name = 'range-mode';
+    copyRadio.value = 'copy';
+    copyRadio.style.cssText = 'margin-right: 8px;';
+
+    const copyLabel = document.createElement('label');
+    copyLabel.htmlFor = 'mode-copy-range';
+    copyLabel.textContent = 'Copy to Clipboard';
+    copyLabel.style.cssText = `
         font-weight: 500;
         color: #555;
         font-size: 14px;
@@ -149,8 +168,10 @@ function createModeSelector() {
     modeField.appendChild(generateLabel);
     modeField.appendChild(typeRadio);
     modeField.appendChild(typeLabel);
+    modeField.appendChild(copyRadio);
+    modeField.appendChild(copyLabel);
 
-    return { modeField, generateRadio, typeRadio };
+    return { modeField, generateRadio, typeRadio, copyRadio };
 }
 
 function createRangeFormFields(form, defaults, showDelay) {
@@ -285,6 +306,7 @@ function setupRangeEventHandlers({
     popup,
     generateRadio,
     typeRadio,
+    copyRadio,
     cancelButton,
     okButton,
     startField,
@@ -315,6 +337,12 @@ function setupRangeEventHandlers({
             if (delayFieldsContainer) {
                 delayFieldsContainer.style.display = 'block';
             }
+        } else if (mode === 'copy') {
+            title.textContent = 'Copy Range';
+            okButton.textContent = 'Copy';
+            if (delayFieldsContainer) {
+                delayFieldsContainer.style.display = 'none';
+            }
         }
     }
 
@@ -332,6 +360,7 @@ function setupRangeEventHandlers({
     // Add event listeners to radio buttons
     generateRadio.addEventListener('change', () => updateUIMode('generate'));
     typeRadio.addEventListener('change', () => updateUIMode('type'));
+    copyRadio.addEventListener('change', () => updateUIMode('copy'));
 
     cancelButton.onclick = () => {
         closePopup();
@@ -357,7 +386,7 @@ function setupRangeEventHandlers({
             return;
         }
 
-        const mode = generateRadio.checked ? 'generate' : 'type';
+        const mode = generateRadio.checked ? 'generate' : typeRadio.checked ? 'type' : 'copy';
         const result = { mode, start, end };
 
         if (mode === 'type') {

@@ -18,7 +18,7 @@ function showCounterstringDialog(options) {
         const title = createTitle(options.title || 'Counterstring');
 
         // Create mode selector
-        const { modeField, generateRadio, typeRadio } = createModeSelector();
+        const { modeField, generateRadio, typeRadio, copyRadio } = createModeSelector();
 
         // Create form
         const form = document.createElement('div');
@@ -43,6 +43,7 @@ function showCounterstringDialog(options) {
             popup,
             generateRadio,
             typeRadio,
+            copyRadio,
             cancelButton,
             okButton,
             lengthField,
@@ -122,7 +123,7 @@ function createModeSelector() {
 
     const generateLabel = document.createElement('label');
     generateLabel.htmlFor = 'mode-generate';
-    generateLabel.textContent = 'Generate Counterstring';
+    generateLabel.textContent = 'Generate';
     generateLabel.style.cssText = `
         font-weight: 500;
         color: #555;
@@ -140,8 +141,26 @@ function createModeSelector() {
 
     const typeLabel = document.createElement('label');
     typeLabel.htmlFor = 'mode-type';
-    typeLabel.textContent = 'Type Counterstring';
+    typeLabel.textContent = 'Type';
     typeLabel.style.cssText = `
+        font-weight: 500;
+        color: #555;
+        font-size: 14px;
+        cursor: pointer;
+        margin-right: 20px;
+    `;
+
+    const copyRadio = document.createElement('input');
+    copyRadio.type = 'radio';
+    copyRadio.id = 'mode-copy';
+    copyRadio.name = 'mode';
+    copyRadio.value = 'copy';
+    copyRadio.style.cssText = 'margin-right: 8px;';
+
+    const copyLabel = document.createElement('label');
+    copyLabel.htmlFor = 'mode-copy';
+    copyLabel.textContent = 'Copy to Clipboard';
+    copyLabel.style.cssText = `
         font-weight: 500;
         color: #555;
         font-size: 14px;
@@ -152,8 +171,10 @@ function createModeSelector() {
     modeField.appendChild(generateLabel);
     modeField.appendChild(typeRadio);
     modeField.appendChild(typeLabel);
+    modeField.appendChild(copyRadio);
+    modeField.appendChild(copyLabel);
 
-    return { modeField, generateRadio, typeRadio };
+    return { modeField, generateRadio, typeRadio, copyRadio };
 }
 
 function createFormFields(form, defaults, showTriggerInputEvents, showDelay) {
@@ -319,6 +340,7 @@ function setupEventHandlers({
     popup,
     generateRadio,
     typeRadio,
+    copyRadio,
     cancelButton,
     okButton,
     lengthField,
@@ -358,6 +380,15 @@ function setupEventHandlers({
             if (delayFieldsContainer) {
                 delayFieldsContainer.style.display = 'block';
             }
+        } else if (mode === 'copy') {
+            title.textContent = 'Copy Counterstring';
+            okButton.textContent = 'Copy';
+            if (triggerInputEventsContainer) {
+                triggerInputEventsContainer.style.display = 'none';
+            }
+            if (delayFieldsContainer) {
+                delayFieldsContainer.style.display = 'none';
+            }
         }
     }
 
@@ -375,6 +406,7 @@ function setupEventHandlers({
     // Add event listeners to radio buttons
     generateRadio.addEventListener('change', () => updateUIMode('generate'));
     typeRadio.addEventListener('change', () => updateUIMode('type'));
+    copyRadio.addEventListener('change', () => updateUIMode('copy'));
 
     cancelButton.onclick = () => {
         closePopup();
@@ -389,7 +421,7 @@ function setupEventHandlers({
             return;
         }
 
-        const mode = generateRadio.checked ? 'generate' : 'type';
+        const mode = generateRadio.checked ? 'generate' : typeRadio.checked ? 'type' : 'copy';
         const result = { mode, length };
 
         // Add checkbox value to result (only for generate mode)

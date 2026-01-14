@@ -46,6 +46,20 @@ async function sleep(ms) {
                 alert('Error: ' + error.message);
             }
 
+        } else if (config.mode === 'copy') {
+            // Copy mode: generate and copy to clipboard
+            try {
+                const randomString = getRandomString(config.pattern, config.flags);
+                navigator.clipboard.writeText(randomString).then(() => {
+                    console.log('Copied random string to clipboard');
+                    console.log(randomString);
+                }).catch(err => {
+                    console.error('Failed to copy to clipboard:', err);
+                });
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+
         } else if (config.mode === 'type') {
             // Type mode: progressive character-by-character typing
             try {

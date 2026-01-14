@@ -4,7 +4,27 @@ async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function generateRepeatedContent(config) {
+    let repeatedContent = '';
 
+    if (config.contentMode === 'text') {
+        repeatedContent = config.text.repeat(config.repeatCount);
+    } else if (config.contentMode === 'chr') {
+        repeatedContent = config.chr.repeat(config.repeatCount);
+    } else if (config.contentMode === 'regex') {
+        try {
+            for (let i = 0; i < config.repeatCount; i++) {
+                const randomString = getRandomString(config.pattern, config.flags);
+                repeatedContent += randomString;
+            }
+        } catch (error) {
+            alert('Error generating random strings: ' + error.message);
+            throw error; // Re-throw to be handled by caller
+        }
+    }
+
+    return repeatedContent;
+}
 
 (async function() {
     try {
@@ -24,22 +44,11 @@ async function sleep(ms) {
 
         if (config.mode === 'generate') {
             // Generate mode: instant value setting
-            let repeatedContent = '';
-
-            if (config.contentMode === 'text') {
-                repeatedContent = config.text.repeat(config.repeatCount);
-            } else if (config.contentMode === 'chr') {
-                repeatedContent = config.chr.repeat(config.repeatCount);
-            } else if (config.contentMode === 'regex') {
-                try {
-                    for (let i = 0; i < config.repeatCount; i++) {
-                        const randomString = getRandomString(config.pattern, config.flags);
-                        repeatedContent += randomString;
-                    }
-                } catch (error) {
-                    alert('Error generating random strings: ' + error.message);
-                    return;
-                }
+            let repeatedContent;
+            try {
+                repeatedContent = generateRepeatedContent(config);
+            } catch (error) {
+                return; // Error already alerted by generateRepeatedContent
             }
 
             console.log(repeatedContent);
@@ -61,6 +70,22 @@ async function sleep(ms) {
                 // Do not set the value
             }
 
+        } else if (config.mode === 'copy') {
+            // Copy mode: generate and copy to clipboard
+            let repeatedContent;
+            try {
+                repeatedContent = generateRepeatedContent(config);
+            } catch (error) {
+                return; // Error already alerted by generateRepeatedContent
+            }
+
+            navigator.clipboard.writeText(repeatedContent).then(() => {
+                console.log('Copied repeated content to clipboard');
+                console.log(repeatedContent);
+            }).catch(err => {
+                console.error('Failed to copy to clipboard:', err);
+            });
+
         } else if (config.mode === 'type') {
             // Type mode: progressive character-by-character typing with speed control
             const abortController = new AbortController();
@@ -79,23 +104,12 @@ async function sleep(ms) {
 
             activeElement.focus();
 
-            let contentToType = '';
-
-            if (config.contentMode === 'text') {
-                contentToType = config.text.repeat(config.repeatCount);
-            } else if (config.contentMode === 'chr') {
-                contentToType = config.chr.repeat(config.repeatCount);
-            } else if (config.contentMode === 'regex') {
-                try {
-                    for (let i = 0; i < config.repeatCount; i++) {
-                        const randomString = getRandomString(config.pattern, config.flags);
-                        contentToType += randomString;
-                    }
-                } catch (error) {
-                    alert('Error generating random strings: ' + error.message);
-                    document.removeEventListener('keydown', escapeHandler);
-                    return;
-                }
+            let contentToType;
+            try {
+                contentToType = generateRepeatedContent(config);
+            } catch (error) {
+                document.removeEventListener('keydown', escapeHandler);
+                return; // Error already alerted by generateRepeatedContent
             }
 
             for (let i = 0; i < contentToType.length; i++) {

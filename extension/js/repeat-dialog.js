@@ -10,7 +10,7 @@ function showRepeatDialog() {
         const title = createTitle('Repeat');
 
         // Create mode selector
-        const { modeField, generateRadio, typeRadio } = createModeSelector();
+        const { modeField, generateRadio, typeRadio, copyRadio } = createModeSelector();
 
         // Create form
         const form = document.createElement('div');
@@ -44,6 +44,7 @@ function showRepeatDialog() {
             popup,
             generateRadio,
             typeRadio,
+            copyRadio,
             speedControls,
             minDelayField,
             maxDelayField,
@@ -130,7 +131,7 @@ function createModeSelector() {
 
     const generateLabel = document.createElement('label');
     generateLabel.htmlFor = 'mode-generate-repeat';
-    generateLabel.textContent = 'Generate Repeat';
+    generateLabel.textContent = 'Generate';
     generateLabel.style.cssText = `
         font-weight: 500;
         color: #555;
@@ -148,8 +149,26 @@ function createModeSelector() {
 
     const typeLabel = document.createElement('label');
     typeLabel.htmlFor = 'mode-type-repeat';
-    typeLabel.textContent = 'Type Repeat';
+    typeLabel.textContent = 'Type';
     typeLabel.style.cssText = `
+        font-weight: 500;
+        color: #555;
+        font-size: 14px;
+        cursor: pointer;
+        margin-right: 20px;
+    `;
+
+    const copyRadio = document.createElement('input');
+    copyRadio.type = 'radio';
+    copyRadio.id = 'mode-copy-repeat';
+    copyRadio.name = 'repeat-mode';
+    copyRadio.value = 'copy';
+    copyRadio.style.cssText = 'margin-right: 8px;';
+
+    const copyLabel = document.createElement('label');
+    copyLabel.htmlFor = 'mode-copy-repeat';
+    copyLabel.textContent = 'Copy to Clipboard';
+    copyLabel.style.cssText = `
         font-weight: 500;
         color: #555;
         font-size: 14px;
@@ -160,8 +179,10 @@ function createModeSelector() {
     modeField.appendChild(generateLabel);
     modeField.appendChild(typeRadio);
     modeField.appendChild(typeLabel);
+    modeField.appendChild(copyRadio);
+    modeField.appendChild(copyLabel);
 
-    return { modeField, generateRadio, typeRadio };
+    return { modeField, generateRadio, typeRadio, copyRadio };
 }
 
 function createSpeedControls() {
@@ -603,6 +624,7 @@ function setupRepeatEventHandlers({
     popup,
     generateRadio,
     typeRadio,
+    copyRadio,
     speedControls,
     minDelayField,
     maxDelayField,
@@ -638,6 +660,10 @@ function setupRepeatEventHandlers({
             title.textContent = 'Type Repeat';
             okButton.textContent = 'Start Typing';
             speedControls.style.display = 'block';
+        } else if (mode === 'copy') {
+            title.textContent = 'Copy Repeat';
+            okButton.textContent = 'Copy';
+            speedControls.style.display = 'none';
         }
     }
 
@@ -655,6 +681,7 @@ function setupRepeatEventHandlers({
     // Add event listeners to radio buttons
     generateRadio.addEventListener('change', () => updateUIMode('generate'));
     typeRadio.addEventListener('change', () => updateUIMode('type'));
+    copyRadio.addEventListener('change', () => updateUIMode('copy'));
 
     repeatTextRadio.addEventListener('change', function() {
         if (this.checked) {
@@ -691,7 +718,7 @@ function setupRepeatEventHandlers({
     };
 
     okButton.onclick = () => {
-        const mode = generateRadio.checked ? 'generate' : 'type';
+        const mode = generateRadio.checked ? 'generate' : typeRadio.checked ? 'type' : 'copy';
         const contentMode = repeatTextRadio.checked ? 'text' : (chrRadio.checked ? 'chr' : 'regex');
         const repeatCount = parseInt(repeatCountInput.value, 10);
 

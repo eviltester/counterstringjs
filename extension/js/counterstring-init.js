@@ -46,6 +46,16 @@ async function sleep(ms) {
             // allow pasting from consle
             console.log(counterString);
 
+        } else if (config.mode === 'copy') {
+            // Copy mode: generate and copy to clipboard
+            const counterString = getCounterString(config.length, config.delimiter);
+            navigator.clipboard.writeText(counterString).then(() => {
+                console.log(`Copied counterstring of length ${config.length} with delimiter "${config.delimiter}" to clipboard`);
+                console.log(counterString);
+            }).catch(err => {
+                console.error('Failed to copy to clipboard:', err);
+            });
+
         } else if (config.mode === 'type') {
             // Type mode: progressive character-by-character typing
             const abortController = new AbortController();

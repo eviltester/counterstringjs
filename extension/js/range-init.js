@@ -42,6 +42,16 @@ async function sleep(ms) {
             // Set the value
             activeElement.value = rangeString;
 
+        } else if (config.mode === 'copy') {
+            // Copy mode: generate and copy to clipboard
+            const rangeString = getRangeString(config.start, config.end);
+            navigator.clipboard.writeText(rangeString).then(() => {
+                console.log('Copied range string to clipboard');
+                console.log(rangeString);
+            }).catch(err => {
+                console.error('Failed to copy to clipboard:', err);
+            });
+
         } else if (config.mode === 'type') {
             // Type mode: progressive character-by-character typing
             const abortController = new AbortController();

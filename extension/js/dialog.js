@@ -3,7 +3,7 @@ function showCounterstringDialog(options) {
         const showDelay = options.showDelay !== undefined ? options.showDelay : false;
         const showTriggerInputEvents = options.showTriggerInputEvents !== undefined ? options.showTriggerInputEvents : true;
         const defaults = {
-            length: '100',
+            length: options.defaultLength || '100',
             minDelay: showDelay ? '100' : undefined,
             maxDelay: showDelay ? '200' : undefined
         };

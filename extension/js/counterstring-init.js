@@ -8,12 +8,18 @@ async function sleep(ms) {
     try {
         const originalActiveElement = document.activeElement;
 
-        const config = await showCounterstringDialog({
+        const dialogOptions = {
             title: 'Counterstring',
             buttonText: 'OK',
             showDelay: true,
             showTriggerInputEvents: true
-        });
+        };
+
+        if (originalActiveElement && originalActiveElement.maxLength && originalActiveElement.maxLength > 0) {
+            dialogOptions.defaultLength = originalActiveElement.maxLength.toString();
+        }
+
+        const config = await showCounterstringDialog(dialogOptions);
 
         if (!config) {
             return;

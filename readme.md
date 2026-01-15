@@ -25,6 +25,32 @@ Description of writing the snippets version:
 - YouTube Video showing creation of the Chrome Extension
     - [youtu.be/Olz4wo-ILwI](https://youtu.be/Olz4wo-ILwI)
 
+## A Note on events
+
+'copy to clipboard' generation allows you to paste the text into the field
+this triggers the normal browser trusted events and all validation supported
+by HTML fields and forms will take effect.
+
+Typing and Generate both use JavaScript to trigger events and set values.
+JavaScript events are 'synthetic' events which are also called 'untrusted'
+events. So browsers do not do exactly the same behaviour with untrusted events.
+
+Generate, sets the value of the field with JavaScript then fires synthetic
+events to 'simulate' user input behaviour. These are not guaranteed to trigger all
+browser behaviour on edit. If you require this after generating, just edit
+one of the chars in the field to trigger any behaviour that JavaScript did
+not trigger.
+
+Typing triggers keydown, keyup and input events. This can trigger most javascript
+methods that have been assigned as listeners to fields, but does not trigger all
+the default browser input validation.
+
+Generate and Typing are useful ways of entering data that is harder to enter for
+a human, and can enter data beyond the limits of the HTML validation, making it
+suitable for testing.
+
+Paste is suitable for testing the human interaction with the browser events.
+
 ## Detailed Description
 
 A CounterString is a string of text e.g. `*3*5*7*9*12*15*` where:
@@ -42,6 +68,7 @@ This extension is a simple CounterString generator, which:
 - displays a dialog asking for the number of characters,
 - then generates a CounterString of that length
 - the CounterString is logged to the dev console to allow copy and pasting,
+- the copy to clipboard option is default to make copy pasting easier
 - the extension also inserts the CounterString into the value of the field that was selected when the right click context menu was displayed
 - this supports supports testing online forms.
 
@@ -85,6 +112,12 @@ Regex Data Generation uses the MIT Licensed `randexp.js`
 
 ## Versions
 
+- 20260115 - 0.4.1
+   - added a generate to clipboard (copy to clipboard) option to allow manual pasting
+   - use maxlength as default for counterstring if the field has this set
+   - make copy to clipboard the default generation option
+   - allow esc to close dialogs and make modal so click main page does not close dialog
+      - because it was closing too often as I was configuring values
 - 20260103 - 0.4.0
    - added optional input event when generating counterstring
    - migrated and expanded features from https://github.com/eviltester/testtoolhub

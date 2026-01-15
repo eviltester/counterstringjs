@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "CounterString",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "CounterString and text generation for Exploratory Testing",
   "background": {
     "service_worker": "js/background.js"

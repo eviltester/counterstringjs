@@ -110,18 +110,18 @@ function createModeSelector() {
     const modeField = document.createElement('div');
     modeField.style.cssText = 'margin-bottom: 20px;';
 
-    const generateRadio = document.createElement('input');
-    generateRadio.type = 'radio';
-    generateRadio.id = 'mode-generate-range';
-    generateRadio.name = 'range-mode';
-    generateRadio.value = 'generate';
-    generateRadio.checked = true;
-    generateRadio.style.cssText = 'margin-right: 8px;';
+    const copyRadio = document.createElement('input');
+    copyRadio.type = 'radio';
+    copyRadio.id = 'mode-copy-range';
+    copyRadio.name = 'range-mode';
+    copyRadio.value = 'copy';
+    copyRadio.checked = true;
+    copyRadio.style.cssText = 'margin-right: 8px;';
 
-    const generateLabel = document.createElement('label');
-    generateLabel.htmlFor = 'mode-generate-range';
-    generateLabel.textContent = 'Generate';
-    generateLabel.style.cssText = `
+    const copyLabel = document.createElement('label');
+    copyLabel.htmlFor = 'mode-copy-range';
+    copyLabel.textContent = 'Copy to Clipboard';
+    copyLabel.style.cssText = `
         font-weight: 500;
         color: #555;
         font-size: 14px;
@@ -147,29 +147,30 @@ function createModeSelector() {
         margin-right: 20px;
     `;
 
-    const copyRadio = document.createElement('input');
-    copyRadio.type = 'radio';
-    copyRadio.id = 'mode-copy-range';
-    copyRadio.name = 'range-mode';
-    copyRadio.value = 'copy';
-    copyRadio.style.cssText = 'margin-right: 8px;';
+    const generateRadio = document.createElement('input');
+    generateRadio.type = 'radio';
+    generateRadio.id = 'mode-generate-range';
+    generateRadio.name = 'range-mode';
+    generateRadio.value = 'generate';
+    generateRadio.style.cssText = 'margin-right: 8px;';
 
-    const copyLabel = document.createElement('label');
-    copyLabel.htmlFor = 'mode-copy-range';
-    copyLabel.textContent = 'Copy to Clipboard';
-    copyLabel.style.cssText = `
+    const generateLabel = document.createElement('label');
+    generateLabel.htmlFor = 'mode-generate-range';
+    generateLabel.textContent = 'Generate';
+    generateLabel.style.cssText = `
         font-weight: 500;
         color: #555;
         font-size: 14px;
         cursor: pointer;
+        margin-right: 20px;
     `;
 
+    modeField.appendChild(copyRadio);
+    modeField.appendChild(copyLabel);
     modeField.appendChild(generateRadio);
     modeField.appendChild(generateLabel);
     modeField.appendChild(typeRadio);
     modeField.appendChild(typeLabel);
-    modeField.appendChild(copyRadio);
-    modeField.appendChild(copyLabel);
 
     return { modeField, generateRadio, typeRadio, copyRadio };
 }
@@ -421,6 +422,6 @@ function setupRangeEventHandlers({
         resolve(result);
     };
 
-    // Initialize UI for default mode (generate)
-    updateUIMode('generate');
+    // Initialize UI for default mode (copy)
+    updateUIMode('copy');
 }

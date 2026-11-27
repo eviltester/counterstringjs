@@ -1,0 +1,57 @@
+name: Release Chrome extension
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Check release version
+        run: |
+          node <<'NODE'
+          const assert = require('node:assert/strict');
+          const { version } = require('./package.json');
+          const manifest = require('./extension/manifest.json');
+          const lock = require('./package-lock.json');
+          assert.equal(process.env.GITHUB_REF_NAME, 'v' + version, 'Tag must match package.json');
+          assert.equal(manifest.version, version, 'Chrome manifest version must match package.json');
+          assert.equal(lock.version, version, 'Lockfile version must match package.json');
+          assert.equal(lock.packages[''].version, version, 'Root lockfile package version must match package.json');
+          NODE
+
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+
+      - name: Verify installable ZIP
+        id: zip
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          archive="releases/counterstringjs-${version//./-}.zip"
+          unzip -tq "$archive"
+          packaged_version="$(unzip -p "$archive" manifest.json | node -p 'JSON.parse(require("node:fs").readFileSync(0, "utf8")).version')"
+          test "$packaged_version" = "$version"
+          printf 'archive=%s\n' "$archive" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARCHIVE: ${{ steps.zip.outputs.archive }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" "$ARCHIVE" \
+            --repo "$GITHUB_REPOSITORY" --verify-tag --generate-notes \
+            --title "CounterString ${GITHUB_REF_NAME#v}" \
+            --notes 'Extract the attached ZIP. In `chrome://extensions`, enable Developer mode, choose **Load unpacked**, and select the folder containing `manifest.json`.'

@@ -12,9 +12,14 @@ See the `extension` folder.
 
 ## Release
 
-- Amend `manifest.json` version
-- Amend `package.json` version
-- `npm run build`
+Update the versions in `extension/manifest.json`, `package.json`, and `package-lock.json`, then commit and push the changes. Push a matching version tag to build the extension and attach the ZIP to the GitHub Release.
+
+```sh
+git tag v0.4.3
+git push origin v0.4.3
+```
+
+For a local build, run `npm ci` and `npm run build`. The ZIP is written to `releases/`.
 
 ## Blog Posts & Videos
 
@@ -99,14 +104,11 @@ You can download this from the Chrome Store:
 
 - [The Counterstring Chrome Store Page](https://chrome.google.com/webstore/detail/counterstring/keklpkmokeicakpclclkdmclhgkklmbd)
 
-To install from source added as an "unpacked extension":
+To install the GitHub release as an unpacked Chrome extension:
 
-- download the zip file from releases
-- unzip the file
-- visit chrome://extensions
-- switch on Developer mode
-- Click Load Unpacked
-- choose the extension folder (the one with the `manifest.json` in it)
+1. Download the `counterstringjs-*.zip` asset from [GitHub Releases](https://github.com/eviltester/counterstringjs/releases) and extract it.
+2. Open `chrome://extensions` and turn on **Developer mode**.
+3. Click **Load unpacked** and select the extracted folder containing `manifest.json`.
 
 ## Regex Data Generation
 

@@ -228,11 +228,14 @@ function createButtons() {
 }
 
 function createResultsArea() {
+    const results = document.createElement('div');
+    const resultsHeader = document.createElement('div');
+    resultsHeader.style.cssText = 'display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 8px;';
+
     const resultsLabel = document.createElement('label');
+    resultsLabel.htmlFor = 'binary-chop-results';
     resultsLabel.textContent = 'Results:';
     resultsLabel.style.cssText = `
-        display: block;
-        margin-bottom: 8px;
         font-weight: 500;
         color: #555;
         font-size: 14px;
@@ -254,7 +257,42 @@ function createResultsArea() {
         resize: vertical;
     `;
 
-    return { resultsLabel, resultsTextarea };
+    const copyButton = document.createElement('button');
+    copyButton.type = 'button';
+    copyButton.textContent = 'Copy to Clipboard';
+    copyButton.disabled = true;
+    copyButton.style.cssText = 'padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; background: #f5f5f5; font-size: 14px;';
+
+    const copyStatus = document.createElement('span');
+    copyStatus.setAttribute('role', 'status');
+    copyStatus.style.cssText = 'margin-left: auto; color: #555; font-size: 13px;';
+
+    copyButton.addEventListener('click', async () => {
+        const report = resultsTextarea.value;
+        let copied = false;
+        try {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(report);
+                copied = true;
+            }
+        } catch {
+            // Try copying the selected report if the Clipboard API is blocked.
+        }
+
+        if (!resultsTextarea.isConnected || resultsTextarea.value !== report) return;
+
+        if (!copied) {
+            resultsTextarea.focus();
+            resultsTextarea.select();
+            copied = document.execCommand('copy');
+            if (copied) copyButton.focus();
+        }
+        copyStatus.textContent = copied ? 'Report copied.' : 'Press Ctrl+C or Command+C to copy the selected report.';
+    });
+
+    resultsHeader.append(resultsLabel, copyStatus, copyButton);
+    results.append(resultsHeader, resultsTextarea);
+    return { results, resultsTextarea, copyButton, copyStatus };
 }
 
 function setupEventHandlers({
@@ -267,6 +305,8 @@ function setupEventHandlers({
     upperRadio,
     lowerRadio,
     resultsTextarea,
+    copyButton,
+    copyStatus,
     resolve,
     reject
 }) {
@@ -319,6 +359,8 @@ function setupEventHandlers({
 
         if (onGenerate) {
             onGenerate({ start, end, bound, resultsTextarea });
+            copyButton.disabled = resultsTextarea.value === '';
+            copyStatus.textContent = '';
         }
     };
 
@@ -351,14 +393,13 @@ function showBinaryChopDialog() {
         const { buttons, cancelButton, generateButton } = createButtons();
 
         // Create results area
-        const { resultsLabel, resultsTextarea } = createResultsArea();
+        const { results, resultsTextarea, copyButton, copyStatus } = createResultsArea();
 
         // Assemble DOM
         popup.appendChild(title);
         popup.appendChild(form);
         popup.appendChild(buttons);
-        popup.appendChild(resultsLabel);
-        popup.appendChild(resultsTextarea);
+        popup.appendChild(results);
         overlay.appendChild(popup);
         document.body.appendChild(overlay);
 
@@ -373,6 +414,8 @@ function showBinaryChopDialog() {
             upperRadio,
             lowerRadio,
             resultsTextarea,
+            copyButton,
+            copyStatus,
             resolve,
             reject
         });

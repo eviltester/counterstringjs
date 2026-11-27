@@ -16,6 +16,19 @@ function createContextMenu() {
                 }
             );
 
+        contextMenus.inspectFieldText = chrome.contextMenus.create(
+            {
+                id: 'inspectFieldText',
+                title: 'Inspect Field Text',
+                contexts: ['editable']
+            },
+            () => {
+                if (chrome.runtime.lastError) {
+                    console.error('Error creating Inspect Field Text context menu:', chrome.runtime.lastError.message);
+                }
+            }
+        );
+
         contextMenus.generateRandom =
             chrome.contextMenus.create(
                 {
@@ -81,6 +94,14 @@ chrome.contextMenus.onClicked.addListener(contextMenuHandler);
 
 
 function contextMenuHandler(info, tab){
+
+    if (info.menuItemId === 'inspectFieldText') {
+        chrome.scripting.executeScript({
+            target: { tabId: tab.id, frameIds: [info.frameId ?? 0] },
+            files: ['js/inspect-field-text.js']
+        }).catch(error => console.error('Inspect Field Text script error:', error));
+        return;
+    }
 
     if(info.menuItemId==="generateCounterstring"){
         try{

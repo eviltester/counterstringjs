@@ -112,6 +112,10 @@ Regex Data Generation uses the MIT Licensed `randexp.js`
 
 ## Versions
 
+- 20261127 - 0.4.2
+   - Added Inspect Field Text to show the current length and declared `maxlength`.
+   - Added ASCII Digits, Printable ASCII, and Latin-1 Supplement presets to Generate Range.
+   - Added a Copy to Clipboard button for the Binary Chop report.
 - 20260115 - 0.4.1
    - added a generate to clipboard (copy to clipboard) option to allow manual pasting
    - use maxlength as default for counterstring if the field has this set

@@ -190,9 +190,10 @@ function createRangeFormFields(form, defaults, showDelay) {
             font-size: 14px;
         `;
 
-        const input = document.createElement('input');
-        input.type = type;
-        input.id = id;
+        const input = document.createElement(type === 'select' ? 'select' : 'input');
+        if (type !== 'select') input.type = type;
+        input.id = `counterstring-range-${id}`;
+        labelEl.htmlFor = input.id;
         input.value = value;
         if (min !== undefined) input.min = min;
         if (max !== undefined) input.max = max;
@@ -227,11 +228,37 @@ function createRangeFormFields(form, defaults, showDelay) {
         return { field, input };
     }
 
+    const presets = {
+        'ASCII Digits': [48, 57],
+        'Printable ASCII': [32, 126],
+        'Latin-1 Supplement': [128, 255]
+    };
+    const presetField = createField('Range Preset', 'preset', 'select', '');
+    presetField.input.add(new Option('Custom', ''));
+    for (const name of Object.keys(presets)) {
+        presetField.input.add(new Option(name, name));
+    }
+    form.appendChild(presetField.field);
+
     const startField = createField('Start Unicode', 'start', 'number', defaults.start, 0, 65535, 'Unicode code point (0-65535)');
     form.appendChild(startField.field);
 
     const endField = createField('End Unicode', 'end', 'number', defaults.end, 0, 65535, 'Unicode code point (0-65535)');
     form.appendChild(endField.field);
+
+    presetField.input.addEventListener('change', () => {
+        const range = presets[presetField.input.value];
+        if (range) {
+            const [start, end] = range;
+            startField.input.value = start;
+            endField.input.value = end;
+        }
+    });
+    for (const input of [startField.input, endField.input]) {
+        input.addEventListener('input', () => {
+            presetField.input.value = '';
+        });
+    }
 
     let minDelayField, maxDelayField, delayFieldsContainer;
     if (showDelay) {

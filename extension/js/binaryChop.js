@@ -81,6 +81,22 @@ if (typeof BinaryChopResults === 'undefined') {
     };
 }
 
+/* exported getBinaryChopReport */
+function getBinaryChopReport(start, end, bound) {
+    const chopper = new BinaryChopifier();
+    const result = bound === 'lower' ? chopper.chopLower(start, end) : chopper.chop(start, end);
+    const rows = [];
+    let text = `start: ${start} end: ${end}\nresult\n\nchop: value (inc)\n${'-'.repeat(20)}\n`;
+
+    for (let i = 1; i <= result.countChopPoints(); i++) {
+        const value = result.getChopPoint(i);
+        const diff = result.getChopPointDiff(i);
+        rows.push({ '#': i, value, inc: diff });
+        text += `${String(i).padStart(2, '0')}: ${String(value).padEnd(5)} (${diff})\n`;
+    }
+    return { text, rows };
+}
+
 if (typeof window !== 'undefined') {
     // Only assign to window if not already defined (prevents issues with multiple script injections)
     window.BinaryChopifier = window.BinaryChopifier || BinaryChopifier;

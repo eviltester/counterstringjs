@@ -18,5 +18,9 @@ module.exports = [
             'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
             'no-console': 'off'
         }
+    },
+    {
+        files: ['extension/js/**/*.js'],
+        languageOptions: { sourceType: 'script' }
     }
 ];

@@ -5,25 +5,12 @@ async function sleep(ms) {
 }
 
 function generateRepeatedContent(config) {
-    let repeatedContent = '';
-
-    if (config.contentMode === 'text') {
-        repeatedContent = config.text.repeat(config.repeatCount);
-    } else if (config.contentMode === 'chr') {
-        repeatedContent = config.chr.repeat(config.repeatCount);
-    } else if (config.contentMode === 'regex') {
-        try {
-            for (let i = 0; i < config.repeatCount; i++) {
-                const randomString = getRandomString(config.pattern, config.flags);
-                repeatedContent += randomString;
-            }
-        } catch (error) {
-            alert('Error generating random strings: ' + error.message);
-            throw error; // Re-throw to be handled by caller
-        }
+    try {
+        return getRepeatedText(config);
+    } catch (error) {
+        alert('Error generating random strings: ' + error.message);
+        throw error;
     }
-
-    return repeatedContent;
 }
 
 (async function() {

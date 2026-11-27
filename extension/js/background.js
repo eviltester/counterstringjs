@@ -2,6 +2,19 @@ var contextMenus = {};
 
 function createContextMenu() {
     chrome.contextMenus.removeAll(() => {
+        contextMenus.openFloatingDialog = chrome.contextMenus.create(
+            {
+                id: 'openFloatingDialog',
+                title: 'Open Floating Dialog',
+                contexts: ['page', 'editable']
+            },
+            () => {
+                if (chrome.runtime.lastError) {
+                    console.error('Error creating Open Floating Dialog context menu:', chrome.runtime.lastError.message);
+                }
+            }
+        );
+
         contextMenus.createCounterString = 
             chrome.contextMenus.create(
                 {
@@ -95,6 +108,18 @@ chrome.contextMenus.onClicked.addListener(contextMenuHandler);
 
 function contextMenuHandler(info, tab){
 
+    if (info.menuItemId === 'openFloatingDialog') {
+        chrome.scripting.executeScript({
+            target: { tabId: tab.id, frameIds: [info.frameId ?? 0] },
+            files: [
+                'js/keyboard-utils.js', 'js/counterstring.js', 'js/external/randexp.min.js',
+                'js/sample-regexes.js', 'js/random.js', 'js/range.js', 'js/repeat.js',
+                'js/binaryChop.js', 'js/floating-field.js', 'js/floating-tools.js', 'js/floating-dialog.js'
+            ]
+        }).catch(error => console.error('Floating Dialog script error:', error));
+        return;
+    }
+
     if (info.menuItemId === 'inspectFieldText') {
         chrome.scripting.executeScript({
             target: { tabId: tab.id, frameIds: [info.frameId ?? 0] },
@@ -140,7 +165,7 @@ function contextMenuHandler(info, tab){
         try{
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                files: ['js/keyboard-utils.js', 'js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random.js', 'js/repeat-dialog.js', 'js/repeat-init.js']
+                files: ['js/keyboard-utils.js', 'js/external/randexp.min.js', 'js/sample-regexes.js', 'js/random.js', 'js/repeat.js', 'js/repeat-dialog.js', 'js/repeat-init.js']
               });
         }catch(e){
             console.error("Repeat Text/Chr script error:", e);

@@ -228,11 +228,7 @@ function createRangeFormFields(form, defaults, showDelay) {
         return { field, input };
     }
 
-    const presets = {
-        'ASCII Digits': [48, 57],
-        'Printable ASCII': [32, 126],
-        'Latin-1 Supplement': [128, 255]
-    };
+    const presets = getRangePresets();
     const presetField = createField('Range Preset', 'preset', 'select', '');
     presetField.input.add(new Option('Custom', ''));
     for (const name of Object.keys(presets)) {

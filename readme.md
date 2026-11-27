@@ -112,6 +112,9 @@ Regex Data Generation uses the MIT Licensed `randexp.js`
 
 ## Versions
 
+- 20261127 - 0.4.3
+   - Added **Open Floating Dialog** to the right-click menu. Drag it by its title and use the Tool menu to switch between the existing tools.
+   - Click or Tab into an editable field to update the target. The dialog shows a short CSS selector and keeps your tool settings while you move between fields.
 - 20261127 - 0.4.2
    - Added Inspect Field Text to show the current length and declared `maxlength`.
    - Added ASCII Digits, Printable ASCII, and Latin-1 Supplement presets to Generate Range.

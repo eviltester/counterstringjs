@@ -89,6 +89,10 @@ This is open source and source can be found at GitHub:
 - https://github.com/eviltester/counterstringjs
 
 
+### Floating dialog
+
+Click the CounterString toolbar icon or choose **Open Floating Dialog** from the page's right-click menu. Click or Tab into a field to select it, and drag the title bar to move the dialog.
+
 ## How to Install as Chrome Extension?
 
 You can download this from the Chrome Store:

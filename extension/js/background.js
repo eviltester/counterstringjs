@@ -104,19 +104,25 @@ function createContextMenu() {
 chrome.runtime.onInstalled.addListener(createContextMenu);
 
 chrome.contextMenus.onClicked.addListener(contextMenuHandler);
+chrome.action.onClicked.addListener(tab => openFloatingDialog(tab.id));
 
+function openFloatingDialog(tabId, frameId = 0) {
+    if (tabId === undefined) return;
+
+    chrome.scripting.executeScript({
+        target: { tabId, frameIds: [frameId] },
+        files: [
+            'js/keyboard-utils.js', 'js/counterstring.js', 'js/external/randexp.min.js',
+            'js/sample-regexes.js', 'js/random.js', 'js/range.js', 'js/repeat.js',
+            'js/binaryChop.js', 'js/floating-field.js', 'js/floating-tools.js', 'js/floating-dialog.js'
+        ]
+    }).catch(error => console.error('Floating Dialog script error:', error));
+}
 
 function contextMenuHandler(info, tab){
 
     if (info.menuItemId === 'openFloatingDialog') {
-        chrome.scripting.executeScript({
-            target: { tabId: tab.id, frameIds: [info.frameId ?? 0] },
-            files: [
-                'js/keyboard-utils.js', 'js/counterstring.js', 'js/external/randexp.min.js',
-                'js/sample-regexes.js', 'js/random.js', 'js/range.js', 'js/repeat.js',
-                'js/binaryChop.js', 'js/floating-field.js', 'js/floating-tools.js', 'js/floating-dialog.js'
-            ]
-        }).catch(error => console.error('Floating Dialog script error:', error));
+        openFloatingDialog(tab.id, info.frameId);
         return;
     }
 
